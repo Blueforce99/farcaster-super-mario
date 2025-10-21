@@ -55,7 +55,7 @@ export default function MarioGame() {
     let currentScore = 0
     let currentLives = 3
     let currentCoins = 0
-    let marioState = 'small' // small, big, fire
+    let marioState = 'small'
 
     // Phaser game configuration
     const config = {
@@ -100,34 +100,72 @@ export default function MarioGame() {
     let flagPole
 
     function preload() {
-      // Generate and load sprites
-      this.textures.addBase64('mario-small', generateMarioSprite('small'))
-      this.textures.addBase64('mario-big', generateMarioSprite('big'))
-      this.textures.addBase64('goomba', generateGoombaSprite())
-      this.textures.addBase64('koopa', generateKoopaSprite())
-      this.textures.addBase64('coin', generateCoinSprite())
-      this.textures.addBase64('mushroom', generateMushroomSprite())
-      this.textures.addBase64('brick', generateBrickSprite())
-      this.textures.addBase64('question', generateQuestionBlockSprite(false))
-      this.textures.addBase64('question-used', generateQuestionBlockSprite(true))
-      this.textures.addBase64('pipe', generatePipeSprite())
+      // Generate sprites and convert to textures properly
+      const spriteConfigs = [
+        { key: 'mario-small', generator: () => generateMarioSprite('small') },
+        { key: 'mario-big', generator: () => generateMarioSprite('big') },
+        { key: 'goomba', generator: generateGoombaSprite },
+        { key: 'koopa', generator: generateKoopaSprite },
+        { key: 'coin', generator: generateCoinSprite },
+        { key: 'mushroom', generator: generateMushroomSprite },
+        { key: 'brick', generator: generateBrickSprite },
+        { key: 'question', generator: () => generateQuestionBlockSprite(false) },
+        { key: 'question-used', generator: () => generateQuestionBlockSprite(true) },
+        { key: 'pipe', generator: generatePipeSprite }
+      ]
+
+      spriteConfigs.forEach(config => {
+        try {
+          const dataURL = config.generator()
+          // Load as image instead of base64
+          this.textures.addCanvas(config.key, this.make.graphics({ x: 0, y: 0, add: false }).canvas)
+          this.load.image(config.key, dataURL)
+        } catch (error) {
+          console.error(`Error generating sprite ${config.key}:`, error)
+        }
+      })
     }
 
     function create() {
+      // Properly load the generated sprites
+      const spriteConfigs = [
+        { key: 'mario-small', generator: () => generateMarioSprite('small') },
+        { key: 'mario-big', generator: () => generateMarioSprite('big') },
+        { key: 'goomba', generator: generateGoombaSprite },
+        { key: 'koopa', generator: generateKoopaSprite },
+        { key: 'coin', generator: generateCoinSprite },
+        { key: 'mushroom', generator: generateMushroomSprite },
+        { key: 'brick', generator: generateBrickSprite },
+        { key: 'question', generator: () => generateQuestionBlockSprite(false) },
+        { key: 'question-used', generator: () => generateQuestionBlockSprite(true) },
+        { key: 'pipe', generator: generatePipeSprite }
+      ]
+
+      // Register all sprite textures from canvas
+      spriteConfigs.forEach(config => {
+        const dataURL = config.generator()
+        // Create image element and add as texture
+        const img = new Image()
+        img.onload = () => {
+          this.textures.addCanvas(config.key, img)
+        }
+        img.src = dataURL
+      })
+
       // World bounds
       this.physics.world.setBounds(0, 0, 3200, 576)
 
-      // Create clouds (background decoration)
+      // Create clouds
       for (let i = 0; i < 10; i++) {
         const x = Phaser.Math.Between(100, 3000)
         const y = Phaser.Math.Between(50, 150)
-        const cloud = this.add.ellipse(x, y, 80, 40, 0xffffff, 0.8)
+        this.add.ellipse(x, y, 80, 40, 0xffffff, 0.8)
       }
 
-      // Create bushes (background decoration)
+      // Create bushes
       for (let i = 0; i < 15; i++) {
         const x = i * 200 + 50
-        const bush = this.add.ellipse(x, 550, 60, 30, 0x228B22)
+        this.add.ellipse(x, 550, 60, 30, 0x228B22)
       }
 
       // Ground
@@ -138,14 +176,14 @@ export default function MarioGame() {
       }
       platforms.refresh()
 
-      // Bricks (destructible)
+      // Bricks
       bricks = this.physics.add.staticGroup()
       
-      // Brick patterns
       for (let i = 0; i < 5; i++) {
         const x = 400 + (i * 40)
         const brick = this.add.image(x, 300, 'brick')
-        brick.setScale(2) // Scale up the 16x16 sprite
+        brick.setScale(2)
+        brick.setDisplaySize(32, 32)
         bricks.add(brick)
       }
       
@@ -153,24 +191,28 @@ export default function MarioGame() {
         const x = 800 + (i * 40)
         const brick = this.add.image(x, 250, 'brick')
         brick.setScale(2)
+        brick.setDisplaySize(32, 32)
         bricks.add(brick)
       }
       bricks.refresh()
 
-      // Question blocks (power-ups)
+      // Question blocks
       questionBlocks = this.physics.add.staticGroup()
       
-      const qBlock1 = this.add.image(480, 300, 'question').setDisplaySize(32, 32)
+      const qBlock1 = this.add.image(480, 300, 'question')
+      qBlock1.setDisplaySize(32, 32)
       qBlock1.setData('type', 'coin')
       qBlock1.setData('used', false)
       questionBlocks.add(qBlock1)
       
-      const qBlock2 = this.add.image(560, 300, 'question').setDisplaySize(32, 32)
+      const qBlock2 = this.add.image(560, 300, 'question')
+      qBlock2.setDisplaySize(32, 32)
       qBlock2.setData('type', 'mushroom')
       qBlock2.setData('used', false)
       questionBlocks.add(qBlock2)
       
-      const qBlock3 = this.add.image(920, 250, 'question').setDisplaySize(32, 32)
+      const qBlock3 = this.add.image(920, 250, 'question')
+      qBlock3.setDisplaySize(32, 32)
       qBlock3.setData('type', 'coin')
       qBlock3.setData('used', false)
       questionBlocks.add(qBlock3)
@@ -193,7 +235,7 @@ export default function MarioGame() {
       const platform2 = this.add.rectangle(1000, 350, 100, 20, 0x00ff00)
       platforms.add(platform2)
       
-      const platform3 = this.add.rectangle(1400, 300, 120, 20, 0x00ff00)
+      const platform3 = this.add.rectangle(1400, 120, 20, 0x00ff00)
       platforms.add(platform3)
       
       const platform4 = this.add.rectangle(1800, 250, 100, 20, 0x00ff00)
@@ -208,21 +250,21 @@ export default function MarioGame() {
       player.setCollideWorldBounds(true)
       player.body.setSize(28, 32)
 
-      // Coins scattered around
+      // Coins
       collectedCoins = this.physics.add.group()
       
       for (let i = 0; i < 30; i++) {
         const x = 200 + (i * 100)
-        // Avoid spawning coins inside pipes (x positions around 600, 1200, 1800)
         if ((x > 570 && x < 630) || (x > 1170 && x < 1230) || (x > 1770 && x < 1830)) {
           continue
         }
         const y = Phaser.Math.Between(200, 450)
-        const coin = this.add.image(x, y, 'coin').setDisplaySize(16, 16)
+        const coin = this.add.image(x, y, 'coin')
+        coin.setDisplaySize(16, 16)
         collectedCoins.add(coin)
       }
 
-      // Enemies (Goombas)
+      // Enemies
       enemies = this.physics.add.group()
       
       createGoomba(this, 500, 520, enemies)
@@ -230,14 +272,13 @@ export default function MarioGame() {
       createGoomba(this, 1300, 520, enemies)
       createGoomba(this, 1700, 520, enemies)
       
-      // Koopa Troopa
       createKoopa(this, 1100, 520, enemies)
       createKoopa(this, 1600, 520, enemies)
 
       // Power-ups group
       powerUps = this.physics.add.group()
 
-      // Flag pole at end
+      // Flag pole
       flagPole = this.add.rectangle(3000, 400, 20, 300, 0x000000)
       this.physics.add.existing(flagPole, true)
       const flag = this.add.rectangle(3020, 300, 40, 30, 0xff0000)
@@ -302,19 +343,22 @@ export default function MarioGame() {
 
     function createPipe(scene, x, y, group) {
       const pipeHeight = 576 - y
-      const pipe = scene.add.image(x, y + pipeHeight/2, 'pipe').setDisplaySize(64, pipeHeight)
+      const pipe = scene.add.image(x, y + pipeHeight/2, 'pipe')
+      pipe.setDisplaySize(64, pipeHeight)
       group.add(pipe)
     }
 
     function createGoomba(scene, x, y, group) {
-      const goomba = scene.add.image(x, y, 'goomba').setDisplaySize(32, 32)
+      const goomba = scene.add.image(x, y, 'goomba')
+      goomba.setDisplaySize(32, 32)
       goomba.setData('type', 'goomba')
       goomba.setData('alive', true)
       group.add(goomba)
     }
 
     function createKoopa(scene, x, y, group) {
-      const koopa = scene.add.image(x, y, 'koopa').setDisplaySize(32, 40)
+      const koopa = scene.add.image(x, y, 'koopa')
+      koopa.setDisplaySize(32, 40)
       koopa.setData('type', 'koopa')
       koopa.setData('alive', true)
       group.add(koopa)
@@ -327,7 +371,6 @@ export default function MarioGame() {
       block.setData('used', true)
       block.setTexture('question-used')
 
-      // Bump animation
       this.tweens.add({
         targets: block,
         y: block.y - 10,
@@ -348,7 +391,8 @@ export default function MarioGame() {
     }
 
     function spawnMushroom(scene, x, y) {
-      const mushroom = scene.add.image(x, y, 'mushroom').setDisplaySize(24, 24)
+      const mushroom = scene.add.image(x, y, 'mushroom')
+      mushroom.setDisplaySize(24, 24)
       powerUps.add(mushroom)
       mushroom.body.setVelocityX(100)
       mushroom.body.setBounce(0)
@@ -390,7 +434,6 @@ export default function MarioGame() {
     function hitEnemy(player, enemy) {
       if (!enemy.getData('alive')) return
 
-      // Check if jumping on enemy
       if (player.body.velocity.y > 0 && player.y < enemy.y - 10) {
         enemy.setData('alive', false)
         enemy.setAlpha(0.5)
@@ -403,12 +446,10 @@ export default function MarioGame() {
         scoreText.setText('Score: ' + currentScore)
         setScore(currentScore)
         
-        // Remove enemy after delay
         this.time.delayedCall(500, () => {
           enemy.destroy()
         })
       } else {
-        // Take damage
         if (marioState === 'big') {
           marioState = 'small'
           player.setTexture('mario-small')
@@ -465,7 +506,6 @@ export default function MarioGame() {
     function update() {
       if (!cursors || !player.body) return
 
-      // Horizontal movement
       if (cursors.left.isDown) {
         player.setVelocityX(-250)
       } else if (cursors.right.isDown) {
@@ -474,12 +514,10 @@ export default function MarioGame() {
         player.setVelocityX(0)
       }
 
-      // Jump
       if (cursors.up.isDown && player.body.touching.down) {
         player.setVelocityY(-500)
       }
 
-      // Enemy AI - reverse direction at edges
       enemies.children.entries.forEach(enemy => {
         if (!enemy.getData('alive')) return
         
@@ -491,7 +529,6 @@ export default function MarioGame() {
       })
     }
 
-    // Cleanup
     return () => {
       if (game) {
         game.destroy(true)
