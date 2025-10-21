@@ -8,11 +8,8 @@ export function generateMarioSprite(state = 'small') {
   if (state === 'small') {
     canvas.width = 16
     canvas.height = 16
-    
-    // Fill background transparent
     ctx.clearRect(0, 0, 16, 16)
     
-    // Mario small sprite (16x16)
     const pixels = [
       [0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0],
       [0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
@@ -49,6 +46,20 @@ export function generateMarioSprite(state = 'small') {
         }
       })
     })
+  } else if (state === 'big') {
+    canvas.width = 16
+    canvas.height = 32
+    ctx.clearRect(0, 0, 16, 32)
+    
+    ctx.fillStyle = '#FF0000'
+    ctx.fillRect(2, 2, 12, 8)
+    ctx.fillStyle = '#FFE4C4'
+    ctx.fillRect(2, 10, 12, 6)
+    ctx.fillStyle = '#FF0000'
+    ctx.fillRect(2, 16, 12, 8)
+    ctx.fillStyle = '#0000FF'
+    ctx.fillRect(2, 24, 5, 8)
+    ctx.fillRect(9, 24, 5, 8)
   }
   
   return canvas.toDataURL('image/png')
@@ -110,25 +121,20 @@ export function generateKoopaSprite() {
   canvas.height = 24
   ctx.clearRect(0, 0, 16, 24)
   
-  // Shell (green)
   ctx.fillStyle = '#00AA00'
   ctx.fillRect(2, 8, 12, 12)
   
-  // Shell pattern (yellow)
   ctx.fillStyle = '#FFFF00'
   ctx.fillRect(4, 10, 8, 2)
   ctx.fillRect(4, 14, 8, 2)
   
-  // Head (light green)
   ctx.fillStyle = '#90EE90'
   ctx.fillRect(4, 2, 8, 6)
   
-  // Eyes
   ctx.fillStyle = '#FFFFFF'
   ctx.fillRect(5, 3, 2, 2)
   ctx.fillRect(9, 3, 2, 2)
   
-  // Pupils
   ctx.fillStyle = '#000000'
   ctx.fillRect(6, 4, 1, 1)
   ctx.fillRect(10, 4, 1, 1)
@@ -144,18 +150,15 @@ export function generateCoinSprite() {
   canvas.height = 16
   ctx.clearRect(0, 0, 16, 16)
   
-  // Gold outer circle
   ctx.fillStyle = '#FFD700'
   ctx.fillRect(5, 3, 6, 10)
   ctx.fillRect(4, 5, 8, 6)
   ctx.fillRect(3, 6, 10, 4)
   
-  // Inner orange
   ctx.fillStyle = '#FFA500'
   ctx.fillRect(6, 5, 4, 6)
   ctx.fillRect(5, 6, 6, 4)
   
-  // Highlight
   ctx.fillStyle = '#FFFF00'
   ctx.fillRect(6, 5, 2, 2)
   
@@ -216,11 +219,9 @@ export function generateBrickSprite() {
   canvas.height = 16
   ctx.clearRect(0, 0, 16, 16)
   
-  // Base brick color
   ctx.fillStyle = '#CD853F'
   ctx.fillRect(0, 0, 16, 16)
   
-  // Darker brick lines
   ctx.fillStyle = '#8B4513'
   ctx.fillRect(0, 5, 16, 1)
   ctx.fillRect(0, 11, 16, 1)
@@ -241,24 +242,20 @@ export function generateQuestionBlockSprite(used = false) {
   ctx.clearRect(0, 0, 16, 16)
   
   if (used) {
-    // Used block (brown)
     ctx.fillStyle = '#8B4513'
     ctx.fillRect(0, 0, 16, 16)
     ctx.fillStyle = '#654321'
     ctx.fillRect(2, 2, 12, 12)
   } else {
-    // Question block (gold)
     ctx.fillStyle = '#FFD700'
     ctx.fillRect(0, 0, 16, 16)
     
-    // ? mark (white)
     ctx.fillStyle = '#FFFFFF'
     ctx.fillRect(6, 3, 4, 2)
     ctx.fillRect(8, 5, 2, 2)
     ctx.fillRect(7, 7, 2, 2)
     ctx.fillRect(7, 10, 2, 2)
     
-    // Border (darker gold)
     ctx.fillStyle = '#FFA500'
     ctx.fillRect(1, 1, 14, 1)
     ctx.fillRect(1, 1, 1, 14)
@@ -275,42 +272,23 @@ export function generatePipeSprite() {
   canvas.height = 32
   ctx.clearRect(0, 0, 32, 32)
   
-  // Pipe body (green)
   ctx.fillStyle = '#00AA00'
   ctx.fillRect(0, 8, 32, 24)
   
-  // Pipe top (lighter green)
   ctx.fillStyle = '#00DD00'
   ctx.fillRect(0, 0, 32, 10)
   
-  // Highlights (even lighter)
   ctx.fillStyle = '#44FF44'
   ctx.fillRect(2, 2, 4, 6)
   ctx.fillRect(2, 10, 4, 20)
   
-  // Shadows (darker)
   ctx.fillStyle = '#006600'
   ctx.fillRect(26, 2, 4, 6)
   ctx.fillRect(26, 10, 4, 20)
   
-  // Inner pipe opening (black oval)
   ctx.fillStyle = '#000000'
   ctx.fillRect(10, 14, 12, 8)
   ctx.fillRect(12, 12, 8, 12)
-  
-  return canvas.toDataURL('image/png')
-} 10, 4, 20)
-  
-  // Shadows
-  ctx.fillStyle = '#008800'
-  ctx.fillRect(26, 2, 4, 6)
-  ctx.fillRect(26, 10, 4, 20)
-  
-  // Inner circle (pipe opening)
-  ctx.fillStyle = '#000000'
-  ctx.beginPath()
-  ctx.ellipse(16, 16, 8, 6, 0, 0, Math.PI * 2)
-  ctx.fill()
   
   return canvas.toDataURL('image/png')
 }
