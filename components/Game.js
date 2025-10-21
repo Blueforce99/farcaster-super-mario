@@ -61,7 +61,7 @@ export default function MarioGame() {
       physics: {
         default: 'arcade',
         arcade: {
-          gravity: { y: 1000 },
+          gravity: { y: 1200 },
           debug: false
         }
       },
@@ -119,40 +119,48 @@ export default function MarioGame() {
       }
       platforms.refresh()
 
-      // Bricks
+      // Bricks with images
       bricks = this.physics.add.staticGroup()
       for (let i = 0; i < 5; i++) {
-        const brick = this.add.image(400 + i * 40, 300, 'brick').setDisplaySize(32, 32)
+        const brick = this.add.image(400 + i * 40, 300, 'brick')
+        brick.setDisplaySize(32, 32)
         bricks.add(brick)
       }
       for (let i = 0; i < 3; i++) {
-        const brick = this.add.image(800 + i * 40, 250, 'brick').setDisplaySize(32, 32)
+        const brick = this.add.image(800 + i * 40, 250, 'brick')
+        brick.setDisplaySize(32, 32)
         bricks.add(brick)
       }
       bricks.refresh()
 
       // Question blocks
       questionBlocks = this.physics.add.staticGroup()
-      const qBlock1 = this.add.image(480, 300, 'question').setDisplaySize(32, 32)
+      const qBlock1 = this.add.image(480, 300, 'question')
+      qBlock1.setDisplaySize(32, 32)
       qBlock1.setData('type', 'coin').setData('used', false)
       questionBlocks.add(qBlock1)
       
-      const qBlock2 = this.add.image(560, 300, 'question').setDisplaySize(32, 32)
+      const qBlock2 = this.add.image(560, 300, 'question')
+      qBlock2.setDisplaySize(32, 32)
       qBlock2.setData('type', 'mushroom').setData('used', false)
       questionBlocks.add(qBlock2)
       
-      const qBlock3 = this.add.image(920, 250, 'question').setDisplaySize(32, 32)
+      const qBlock3 = this.add.image(920, 250, 'question')
+      qBlock3.setDisplaySize(32, 32)
       qBlock3.setData('type', 'coin').setData('used', false)
       questionBlocks.add(qBlock3)
       questionBlocks.refresh()
 
-      // Pipes
+      // Pipes with images
       pipes = this.physics.add.staticGroup()
-      const pipe1 = this.add.image(600, 530, 'pipe').setDisplaySize(64, 46)
+      const pipe1 = this.add.image(600, 530, 'pipe')
+      pipe1.setDisplaySize(64, 46)
       pipes.add(pipe1)
-      const pipe2 = this.add.image(1200, 530, 'pipe').setDisplaySize(64, 46)
+      const pipe2 = this.add.image(1200, 530, 'pipe')
+      pipe2.setDisplaySize(64, 46)
       pipes.add(pipe2)
-      const pipe3 = this.add.image(1800, 480, 'pipe').setDisplaySize(64, 96)
+      const pipe3 = this.add.image(1800, 480, 'pipe')
+      pipe3.setDisplaySize(64, 96)
       pipes.add(pipe3)
       pipes.refresh()
 
@@ -163,33 +171,31 @@ export default function MarioGame() {
       platforms.add(this.add.rectangle(1800, 250, 100, 20, 0x00ff00))
       platforms.refresh()
 
-      // Mario
-      player = this.physics.add.sprite(100, 450, 'mario-small')
+      // Mario - use physics body
+      player = this.physics.add.sprite(100, 300, 'mario-small')
       player.setDisplaySize(32, 32)
-      player.setBounce(0.1)
+      player.setBounce(0)
       player.setCollideWorldBounds(true)
-      player.body.setSize(28, 32)
-      player.body.setDrag(0, 0)
+      player.setDrag(0)
 
-      // Coins
-      collectedCoins = this.physics.add.group()
+      // Coins - static visual objects (not physics)
+      collectedCoins = this.add.group()
       for (let i = 0; i < 30; i++) {
         const x = 200 + i * 100
         if ((x > 570 && x < 630) || (x > 1170 && x < 1230) || (x > 1770 && x < 1830)) continue
-        const coin = this.physics.add.sprite(x, Phaser.Math.Between(200, 450), 'coin')
+        const coin = this.add.image(x, Phaser.Math.Between(200, 450), 'coin')
         coin.setDisplaySize(16, 16)
-        coin.setGravityY(0) // Coins don't fall
         collectedCoins.add(coin)
       }
 
-      // Enemies
+      // Enemies - physics sprites
       enemies = this.physics.add.group()
-      createGoomba(this, 500, 520, enemies)
-      createGoomba(this, 900, 520, enemies)
-      createGoomba(this, 1300, 520, enemies)
-      createGoomba(this, 1700, 520, enemies)
-      createKoopa(this, 1100, 520, enemies)
-      createKoopa(this, 1600, 520, enemies)
+      createGoomba(this, 500, 300, enemies)
+      createGoomba(this, 900, 300, enemies)
+      createGoomba(this, 1300, 300, enemies)
+      createGoomba(this, 1700, 300, enemies)
+      createKoopa(this, 1100, 300, enemies)
+      createKoopa(this, 1600, 300, enemies)
 
       // Power-ups
       powerUps = this.physics.add.group()
@@ -204,15 +210,14 @@ export default function MarioGame() {
       this.physics.add.collider(player, bricks)
       this.physics.add.collider(player, questionBlocks, hitQuestionBlock, null, this)
       this.physics.add.collider(player, pipes)
-      this.physics.add.collider(collectedCoins, platforms)
       this.physics.add.collider(enemies, platforms)
       this.physics.add.collider(enemies, bricks)
       this.physics.add.collider(enemies, pipes)
       this.physics.add.collider(powerUps, platforms)
-      this.physics.add.collider(powerUps, bricks)
 
+      // Set enemy velocity
       enemies.children.entries.forEach(enemy => {
-        enemy.body.setVelocityX(-80)
+        enemy.setVelocityX(-80)
       })
 
       // Overlaps
@@ -245,6 +250,7 @@ export default function MarioGame() {
       goomba.setDisplaySize(32, 32)
       goomba.setBounce(0)
       goomba.setCollideWorldBounds(true)
+      goomba.setDrag(0)
       goomba.setData('type', 'goomba').setData('alive', true)
       group.add(goomba)
     }
@@ -254,6 +260,7 @@ export default function MarioGame() {
       koopa.setDisplaySize(32, 40)
       koopa.setBounce(0)
       koopa.setCollideWorldBounds(true)
+      koopa.setDrag(0)
       koopa.setData('type', 'koopa').setData('alive', true)
       group.add(koopa)
     }
@@ -283,6 +290,7 @@ export default function MarioGame() {
       const mushroom = scene.physics.add.sprite(x, y, 'mushroom')
       mushroom.setDisplaySize(24, 24)
       mushroom.setBounce(0)
+      mushroom.setDrag(0)
       powerUps.add(mushroom)
       mushroom.setVelocityX(100)
       mushroom.setData('type', 'mushroom')
@@ -310,7 +318,6 @@ export default function MarioGame() {
       if (powerUp.getData('type') === 'mushroom' && marioState === 'small') {
         marioState = 'big'
         player.setTexture('mario-big').setDisplaySize(32, 48)
-        player.body.setSize(28, 48)
         currentScore += 1000
         scoreText.setText('Score: ' + currentScore)
         setScore(currentScore)
@@ -322,7 +329,7 @@ export default function MarioGame() {
 
       if (player.body.velocity.y > 0 && player.y < enemy.y - 10) {
         enemy.setData('alive', false).setAlpha(0.5).setTint(0x888888)
-        enemy.body.setVelocity(0, 0).enable = false
+        enemy.setVelocity(0, 0)
         player.setVelocityY(-300)
         currentScore += 200
         scoreText.setText('Score: ' + currentScore)
@@ -333,7 +340,6 @@ export default function MarioGame() {
         if (marioState === 'big') {
           marioState = 'small'
           player.setTexture('mario-small').setDisplaySize(32, 32)
-          player.body.setSize(28, 32)
         } else {
           loseLife(this)
         }
@@ -348,7 +354,7 @@ export default function MarioGame() {
       if (currentLives <= 0) {
         gameOver(scene)
       } else {
-        player.setPosition(100, 450).setVelocity(0, 0)
+        player.setPosition(100, 300).setVelocity(0, 0)
       }
     }
 
@@ -374,6 +380,7 @@ export default function MarioGame() {
     function update() {
       if (!cursors || !player.body) return
 
+      // Movement
       if (cursors.left.isDown) {
         player.setVelocityX(-250)
       } else if (cursors.right.isDown) {
@@ -382,17 +389,19 @@ export default function MarioGame() {
         player.setVelocityX(0)
       }
 
+      // Jump
       if (cursors.up.isDown && player.body.touching.down) {
         player.setVelocityY(-500)
       }
 
+      // Enemy AI
       enemies.children.entries.forEach(enemy => {
         if (!enemy.getData('alive')) return
         
         if (enemy.body.velocity.x > 0 && enemy.body.blocked.right) {
-          enemy.body.setVelocityX(-80)
+          enemy.setVelocityX(-80)
         } else if (enemy.body.velocity.x < 0 && enemy.body.blocked.left) {
-          enemy.body.setVelocityX(80)
+          enemy.setVelocityX(80)
         }
       })
     }
