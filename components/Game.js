@@ -100,8 +100,17 @@ export default function MarioGame() {
     let flagPole
 
     function preload() {
-      // We'll use simple geometric shapes as placeholders
-      // In production, you'd load actual sprite sheets here
+      // Generate and load sprites
+      this.textures.addBase64('mario-small', generateMarioSprite('small'))
+      this.textures.addBase64('mario-big', generateMarioSprite('big'))
+      this.textures.addBase64('goomba', generateGoombaSprite())
+      this.textures.addBase64('koopa', generateKoopaSprite())
+      this.textures.addBase64('coin', generateCoinSprite())
+      this.textures.addBase64('mushroom', generateMushroomSprite())
+      this.textures.addBase64('brick', generateBrickSprite())
+      this.textures.addBase64('question', generateQuestionBlockSprite(false))
+      this.textures.addBase64('question-used', generateQuestionBlockSprite(true))
+      this.textures.addBase64('pipe', generatePipeSprite())
     }
 
     function create() {
