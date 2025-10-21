@@ -144,13 +144,15 @@ export default function MarioGame() {
       // Brick patterns
       for (let i = 0; i < 5; i++) {
         const x = 400 + (i * 40)
-        const brick = this.add.rectangle(x, 300, 32, 32, 0xD2691E)
+        const brick = this.add.image(x, 300, 'brick')
+        brick.setScale(2) // Scale up the 16x16 sprite
         bricks.add(brick)
       }
       
       for (let i = 0; i < 3; i++) {
         const x = 800 + (i * 40)
-        const brick = this.add.rectangle(x, 250, 32, 32, 0xD2691E)
+        const brick = this.add.image(x, 250, 'brick')
+        brick.setScale(2)
         bricks.add(brick)
       }
       bricks.refresh()
@@ -158,17 +160,17 @@ export default function MarioGame() {
       // Question blocks (power-ups)
       questionBlocks = this.physics.add.staticGroup()
       
-      const qBlock1 = this.add.rectangle(480, 300, 32, 32, 0xFFD700)
+      const qBlock1 = this.add.image(480, 300, 'question').setDisplaySize(32, 32)
       qBlock1.setData('type', 'coin')
       qBlock1.setData('used', false)
       questionBlocks.add(qBlock1)
       
-      const qBlock2 = this.add.rectangle(560, 300, 32, 32, 0xFFD700)
+      const qBlock2 = this.add.image(560, 300, 'question').setDisplaySize(32, 32)
       qBlock2.setData('type', 'mushroom')
       qBlock2.setData('used', false)
       questionBlocks.add(qBlock2)
       
-      const qBlock3 = this.add.rectangle(920, 250, 32, 32, 0xFFD700)
+      const qBlock3 = this.add.image(920, 250, 'question').setDisplaySize(32, 32)
       qBlock3.setData('type', 'coin')
       qBlock3.setData('used', false)
       questionBlocks.add(qBlock3)
@@ -200,18 +202,8 @@ export default function MarioGame() {
       platforms.refresh()
 
       // Create Mario
-      player = this.physics.add.sprite(100, 450, null)
+      player = this.physics.add.sprite(100, 450, 'mario-small')
       player.setDisplaySize(32, 32)
-      const marioGraphics = this.add.graphics()
-      marioGraphics.fillStyle(0xff0000, 1)
-      marioGraphics.fillRect(84, 434, 32, 32)
-      // Mario's hat
-      marioGraphics.fillStyle(0x8B0000, 1)
-      marioGraphics.fillRect(84, 434, 32, 10)
-      // Mario's face
-      marioGraphics.fillStyle(0xFFDBAC, 1)
-      marioGraphics.fillCircle(100, 455, 8)
-      
       player.setBounce(0.1)
       player.setCollideWorldBounds(true)
       player.body.setSize(28, 32)
@@ -226,8 +218,7 @@ export default function MarioGame() {
           continue
         }
         const y = Phaser.Math.Between(200, 450)
-        const coin = this.add.circle(x, y, 8, 0xffd700)
-        const coinInner = this.add.circle(x, y, 4, 0xFFFFFF, 0.5)
+        const coin = this.add.image(x, y, 'coin').setDisplaySize(16, 16)
         collectedCoins.add(coin)
       }
 
@@ -311,29 +302,22 @@ export default function MarioGame() {
 
     function createPipe(scene, x, y, group) {
       const pipeHeight = 576 - y
-      const pipe = scene.add.rectangle(x, y + pipeHeight/2, 64, pipeHeight, 0x00aa00)
-      const pipeTop = scene.add.rectangle(x, y - 10, 72, 20, 0x00cc00)
+      const pipe = scene.add.image(x, y + pipeHeight/2, 'pipe').setDisplaySize(64, pipeHeight)
       group.add(pipe)
-      group.add(pipeTop)
     }
 
     function createGoomba(scene, x, y, group) {
-      const goomba = scene.add.rectangle(x, y, 32, 32, 0x8B4513)
+      const goomba = scene.add.image(x, y, 'goomba').setDisplaySize(32, 32)
       goomba.setData('type', 'goomba')
       goomba.setData('alive', true)
       group.add(goomba)
-      // Eyes
-      scene.add.circle(x - 6, y - 4, 3, 0xffffff)
-      scene.add.circle(x + 6, y - 4, 3, 0xffffff)
     }
 
     function createKoopa(scene, x, y, group) {
-      const koopa = scene.add.rectangle(x, y, 32, 40, 0x00aa00)
+      const koopa = scene.add.image(x, y, 'koopa').setDisplaySize(32, 40)
       koopa.setData('type', 'koopa')
       koopa.setData('alive', true)
       group.add(koopa)
-      // Shell pattern
-      scene.add.rectangle(x, y, 32, 20, 0xFFFF00)
     }
 
     function hitQuestionBlock(player, block) {
@@ -341,7 +325,7 @@ export default function MarioGame() {
 
       const blockType = block.getData('type')
       block.setData('used', true)
-      block.setFillStyle(0x8B4513)
+      block.setTexture('question-used')
 
       // Bump animation
       this.tweens.add({
@@ -364,8 +348,7 @@ export default function MarioGame() {
     }
 
     function spawnMushroom(scene, x, y) {
-      const mushroom = scene.add.circle(x, y, 12, 0xff0000)
-      const mushroomSpots = scene.add.circle(x, y - 3, 4, 0xffffff)
+      const mushroom = scene.add.image(x, y, 'mushroom').setDisplaySize(24, 24)
       powerUps.add(mushroom)
       mushroom.body.setVelocityX(100)
       mushroom.body.setBounce(0)
@@ -395,6 +378,7 @@ export default function MarioGame() {
       
       if (type === 'mushroom' && marioState === 'small') {
         marioState = 'big'
+        player.setTexture('mario-big')
         player.setDisplaySize(32, 48)
         player.body.setSize(28, 48)
         currentScore += 1000
@@ -409,7 +393,8 @@ export default function MarioGame() {
       // Check if jumping on enemy
       if (player.body.velocity.y > 0 && player.y < enemy.y - 10) {
         enemy.setData('alive', false)
-        enemy.setAlpha(0.3)
+        enemy.setAlpha(0.5)
+        enemy.setTint(0x888888)
         enemy.body.setVelocity(0, 0)
         enemy.body.enable = false
         
@@ -426,6 +411,7 @@ export default function MarioGame() {
         // Take damage
         if (marioState === 'big') {
           marioState = 'small'
+          player.setTexture('mario-small')
           player.setDisplaySize(32, 32)
           player.body.setSize(28, 32)
         } else {
