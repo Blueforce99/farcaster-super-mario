@@ -1,21 +1,40 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
-import Phaser from 'phaser'
-import { sdk } from '@farcaster/miniapp-sdk'
+import dynamic from 'next/dynamic'
+
+// Dynamically import SDK to avoid SSR issues
+let sdk = null
+if (typeof window !== 'undefined') {
+  import('@farcaster/miniapp-sdk').then(module => {
+    sdk = module.sdk
+  })
+}
 
 export default function MarioGame() {
   const gameRef = useRef(null)
   const [gameInstance, setGameInstance] = useState(null)
   const [score, setScore] = useState(0)
   const [lives, setLives] = useState(3)
+  const [Phaser, setPhaser] = useState(null)
 
   useEffect(() => {
+    // Dynamically import Phaser only on client side
+    import('phaser').then((PhaserModule) => {
+      setPhaser(PhaserModule.default)
+    })
+  }, [])
+
+  useEffect(() => {
+    if (!Phaser || !gameRef.current) return
+
     // Initialize Farcaster SDK
     const initSDK = async () => {
       try {
-        await sdk.actions.ready()
-        console.log('Farcaster SDK ready')
+        if (sdk && sdk.actions) {
+          await sdk.actions.ready()
+          console.log('Farcaster SDK ready')
+        }
       } catch (error) {
         console.error('SDK error:', error)
       }
@@ -216,9 +235,11 @@ export default function MarioGame() {
 
     // Cleanup
     return () => {
-      game.destroy(true)
+      if (game) {
+        game.destroy(true)
+      }
     }
-  }, [])
+  }, [Phaser])
 
   return (
     <div style={{ 
