@@ -1,4 +1,4 @@
-import MarioGame from '@/components/Game'
+import MarioGame from '../components/Game'
 
 export default function Home() {
   return <MarioGame />
