@@ -202,6 +202,10 @@ export default function MarioGame() {
       
       for (let i = 0; i < 30; i++) {
         const x = 200 + (i * 100)
+        // Avoid spawning coins inside pipes (x positions around 600, 1200, 1800)
+        if ((x > 570 && x < 630) || (x > 1170 && x < 1230) || (x > 1770 && x < 1830)) {
+          continue
+        }
         const y = Phaser.Math.Between(200, 450)
         const coin = this.add.circle(x, y, 8, 0xffd700)
         const coinInner = this.add.circle(x, y, 4, 0xFFFFFF, 0.5)
@@ -239,6 +243,7 @@ export default function MarioGame() {
       this.physics.add.collider(enemies, pipes)
       this.physics.add.collider(powerUps, platforms)
       this.physics.add.collider(powerUps, bricks)
+      this.physics.add.collider(powerUps, pipes)
 
       // Enemy behavior
       enemies.children.entries.forEach(enemy => {
