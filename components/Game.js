@@ -165,15 +165,20 @@ export default function MarioGame() {
 
       // Mario
       player = this.physics.add.sprite(100, 450, 'mario-small')
-      player.setDisplaySize(32, 32).setBounce(0.1).setCollideWorldBounds(true)
+      player.setDisplaySize(32, 32)
+      player.setBounce(0.1)
+      player.setCollideWorldBounds(true)
       player.body.setSize(28, 32)
+      player.body.setDrag(0, 0)
 
       // Coins
       collectedCoins = this.physics.add.group()
       for (let i = 0; i < 30; i++) {
         const x = 200 + i * 100
         if ((x > 570 && x < 630) || (x > 1170 && x < 1230) || (x > 1770 && x < 1830)) continue
-        const coin = this.add.image(x, Phaser.Math.Between(200, 450), 'coin').setDisplaySize(16, 16)
+        const coin = this.physics.add.sprite(x, Phaser.Math.Between(200, 450), 'coin')
+        coin.setDisplaySize(16, 16)
+        coin.setGravityY(0) // Coins don't fall
         collectedCoins.add(coin)
       }
 
@@ -236,13 +241,19 @@ export default function MarioGame() {
     }
 
     function createGoomba(scene, x, y, group) {
-      const goomba = scene.add.image(x, y, 'goomba').setDisplaySize(32, 32)
+      const goomba = scene.physics.add.sprite(x, y, 'goomba')
+      goomba.setDisplaySize(32, 32)
+      goomba.setBounce(0)
+      goomba.setCollideWorldBounds(true)
       goomba.setData('type', 'goomba').setData('alive', true)
       group.add(goomba)
     }
 
     function createKoopa(scene, x, y, group) {
-      const koopa = scene.add.image(x, y, 'koopa').setDisplaySize(32, 40)
+      const koopa = scene.physics.add.sprite(x, y, 'koopa')
+      koopa.setDisplaySize(32, 40)
+      koopa.setBounce(0)
+      koopa.setCollideWorldBounds(true)
       koopa.setData('type', 'koopa').setData('alive', true)
       group.add(koopa)
     }
@@ -269,9 +280,11 @@ export default function MarioGame() {
     }
 
     function spawnMushroom(scene, x, y) {
-      const mushroom = scene.add.image(x, y, 'mushroom').setDisplaySize(24, 24)
+      const mushroom = scene.physics.add.sprite(x, y, 'mushroom')
+      mushroom.setDisplaySize(24, 24)
+      mushroom.setBounce(0)
       powerUps.add(mushroom)
-      mushroom.body.setVelocityX(100).setBounce(0)
+      mushroom.setVelocityX(100)
       mushroom.setData('type', 'mushroom')
     }
 
