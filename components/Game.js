@@ -12,12 +12,11 @@ import {
   generatePipeSprite
 } from './SpriteGenerator'
 
-// Dynamically import SDK to avoid SSR issues
 let sdk = null
 if (typeof window !== 'undefined') {
   import('@farcaster/miniapp-sdk').then(module => {
     sdk = module.sdk
-  })
+  }).catch(err => console.log('SDK not available'))
 }
 
 export default function MarioGame() {
@@ -29,7 +28,6 @@ export default function MarioGame() {
   const [Phaser, setPhaser] = useState(null)
 
   useEffect(() => {
-    // Dynamically import Phaser only on client side
     import('phaser').then((PhaserModule) => {
       setPhaser(PhaserModule.default)
     })
@@ -38,12 +36,10 @@ export default function MarioGame() {
   useEffect(() => {
     if (!Phaser || !gameRef.current) return
 
-    // Initialize Farcaster SDK
     const initSDK = async () => {
       try {
         if (sdk && sdk.actions) {
           await sdk.actions.ready()
-          console.log('Farcaster SDK ready')
         }
       } catch (error) {
         console.error('SDK error:', error)
@@ -51,13 +47,11 @@ export default function MarioGame() {
     }
     initSDK()
 
-    // Game state
     let currentScore = 0
     let currentLives = 3
     let currentCoins = 0
     let marioState = 'small'
 
-    // Phaser game configuration
     const config = {
       type: Phaser.AUTO,
       width: 1024,
@@ -85,84 +79,34 @@ export default function MarioGame() {
     const game = new Phaser.Game(config)
     setGameInstance(game)
 
-    let player
-    let platforms
-    let bricks
-    let questionBlocks
-    let cursors
-    let scoreText
-    let livesText
-    let coinsText
-    let collectedCoins
-    let enemies
-    let powerUps
-    let pipes
-    let flagPole
+    let player, platforms, bricks, questionBlocks, cursors, scoreText, livesText, coinsText
+    let collectedCoins, enemies, powerUps, pipes, flagPole
 
     function preload() {
-      // Generate sprites and convert to textures properly
-      const spriteConfigs = [
-        { key: 'mario-small', generator: () => generateMarioSprite('small') },
-        { key: 'mario-big', generator: () => generateMarioSprite('big') },
-        { key: 'goomba', generator: generateGoombaSprite },
-        { key: 'koopa', generator: generateKoopaSprite },
-        { key: 'coin', generator: generateCoinSprite },
-        { key: 'mushroom', generator: generateMushroomSprite },
-        { key: 'brick', generator: generateBrickSprite },
-        { key: 'question', generator: () => generateQuestionBlockSprite(false) },
-        { key: 'question-used', generator: () => generateQuestionBlockSprite(true) },
-        { key: 'pipe', generator: generatePipeSprite }
-      ]
-
-      spriteConfigs.forEach(config => {
-        try {
-          const dataURL = config.generator()
-          // Load as image instead of base64
-          this.textures.addCanvas(config.key, this.make.graphics({ x: 0, y: 0, add: false }).canvas)
-          this.load.image(config.key, dataURL)
-        } catch (error) {
-          console.error(`Error generating sprite ${config.key}:`, error)
-        }
-      })
+      // Load SVG sprites
+      this.load.image('mario-small', generateMarioSprite('small'))
+      this.load.image('mario-big', generateMarioSprite('big'))
+      this.load.image('goomba', generateGoombaSprite())
+      this.load.image('koopa', generateKoopaSprite())
+      this.load.image('coin', generateCoinSprite())
+      this.load.image('mushroom', generateMushroomSprite())
+      this.load.image('brick', generateBrickSprite())
+      this.load.image('question', generateQuestionBlockSprite(false))
+      this.load.image('question-used', generateQuestionBlockSprite(true))
+      this.load.image('pipe', generatePipeSprite())
     }
 
     function create() {
-      // Properly load the generated sprites
-      const spriteConfigs = [
-        { key: 'mario-small', generator: () => generateMarioSprite('small') },
-        { key: 'mario-big', generator: () => generateMarioSprite('big') },
-        { key: 'goomba', generator: generateGoombaSprite },
-        { key: 'koopa', generator: generateKoopaSprite },
-        { key: 'coin', generator: generateCoinSprite },
-        { key: 'mushroom', generator: generateMushroomSprite },
-        { key: 'brick', generator: generateBrickSprite },
-        { key: 'question', generator: () => generateQuestionBlockSprite(false) },
-        { key: 'question-used', generator: () => generateQuestionBlockSprite(true) },
-        { key: 'pipe', generator: generatePipeSprite }
-      ]
-
-      // Register all sprite textures from canvas
-      spriteConfigs.forEach(config => {
-        const dataURL = config.generator()
-        // Create image element and add as texture
-        const img = new Image()
-        img.onload = () => {
-          this.textures.addCanvas(config.key, img)
-        }
-        img.src = dataURL
-      })
-
-      // World bounds
       this.physics.world.setBounds(0, 0, 3200, 576)
 
-      // Create clouds
+      // Clouds
       for (let i = 0; i < 10; i++) {
         const x = Phaser.Math.Between(100, 3000)
         const y = Phaser.Math.Between(50, 150)
         this.add.ellipse(x, y, 80, 40, 0xffffff, 0.8)
       }
 
-      // Create bushes
+      // Bushes
       for (let i = 0; i < 15; i++) {
         const x = i * 200 + 50
         this.add.ellipse(x, 550, 60, 30, 0x228B22)
@@ -171,117 +115,84 @@ export default function MarioGame() {
       // Ground
       platforms = this.physics.add.staticGroup()
       for (let x = 0; x < 3200; x += 32) {
-        const ground = this.add.rectangle(x + 16, 560, 32, 32, 0x8B4513)
-        platforms.add(ground)
+        platforms.add(this.add.rectangle(x + 16, 560, 32, 32, 0x8B4513))
       }
       platforms.refresh()
 
       // Bricks
       bricks = this.physics.add.staticGroup()
-      
       for (let i = 0; i < 5; i++) {
-        const x = 400 + (i * 40)
-        const brick = this.add.image(x, 300, 'brick')
-        brick.setScale(2)
-        brick.setDisplaySize(32, 32)
+        const brick = this.add.image(400 + i * 40, 300, 'brick').setDisplaySize(32, 32)
         bricks.add(brick)
       }
-      
       for (let i = 0; i < 3; i++) {
-        const x = 800 + (i * 40)
-        const brick = this.add.image(x, 250, 'brick')
-        brick.setScale(2)
-        brick.setDisplaySize(32, 32)
+        const brick = this.add.image(800 + i * 40, 250, 'brick').setDisplaySize(32, 32)
         bricks.add(brick)
       }
       bricks.refresh()
 
       // Question blocks
       questionBlocks = this.physics.add.staticGroup()
-      
-      const qBlock1 = this.add.image(480, 300, 'question')
-      qBlock1.setDisplaySize(32, 32)
-      qBlock1.setData('type', 'coin')
-      qBlock1.setData('used', false)
+      const qBlock1 = this.add.image(480, 300, 'question').setDisplaySize(32, 32)
+      qBlock1.setData('type', 'coin').setData('used', false)
       questionBlocks.add(qBlock1)
       
-      const qBlock2 = this.add.image(560, 300, 'question')
-      qBlock2.setDisplaySize(32, 32)
-      qBlock2.setData('type', 'mushroom')
-      qBlock2.setData('used', false)
+      const qBlock2 = this.add.image(560, 300, 'question').setDisplaySize(32, 32)
+      qBlock2.setData('type', 'mushroom').setData('used', false)
       questionBlocks.add(qBlock2)
       
-      const qBlock3 = this.add.image(920, 250, 'question')
-      qBlock3.setDisplaySize(32, 32)
-      qBlock3.setData('type', 'coin')
-      qBlock3.setData('used', false)
+      const qBlock3 = this.add.image(920, 250, 'question').setDisplaySize(32, 32)
+      qBlock3.setData('type', 'coin').setData('used', false)
       questionBlocks.add(qBlock3)
-      
       questionBlocks.refresh()
 
       // Pipes
       pipes = this.physics.add.staticGroup()
-      
-      createPipe(this, 600, 500, pipes)
-      createPipe(this, 1200, 500, pipes)
-      createPipe(this, 1800, 450, pipes)
-      
+      const pipe1 = this.add.image(600, 530, 'pipe').setDisplaySize(64, 46)
+      pipes.add(pipe1)
+      const pipe2 = this.add.image(1200, 530, 'pipe').setDisplaySize(64, 46)
+      pipes.add(pipe2)
+      const pipe3 = this.add.image(1800, 480, 'pipe').setDisplaySize(64, 96)
+      pipes.add(pipe3)
       pipes.refresh()
 
       // Floating platforms
-      const platform1 = this.add.rectangle(700, 400, 120, 20, 0x00ff00)
-      platforms.add(platform1)
-      
-      const platform2 = this.add.rectangle(1000, 350, 100, 20, 0x00ff00)
-      platforms.add(platform2)
-      
-      const platform3 = this.add.rectangle(1400, 120, 20, 0x00ff00)
-      platforms.add(platform3)
-      
-      const platform4 = this.add.rectangle(1800, 250, 100, 20, 0x00ff00)
-      platforms.add(platform4)
-      
+      platforms.add(this.add.rectangle(700, 400, 120, 20, 0x00ff00))
+      platforms.add(this.add.rectangle(1000, 350, 100, 20, 0x00ff00))
+      platforms.add(this.add.rectangle(1400, 300, 120, 20, 0x00ff00))
+      platforms.add(this.add.rectangle(1800, 250, 100, 20, 0x00ff00))
       platforms.refresh()
 
-      // Create Mario
+      // Mario
       player = this.physics.add.sprite(100, 450, 'mario-small')
-      player.setDisplaySize(32, 32)
-      player.setBounce(0.1)
-      player.setCollideWorldBounds(true)
+      player.setDisplaySize(32, 32).setBounce(0.1).setCollideWorldBounds(true)
       player.body.setSize(28, 32)
 
       // Coins
       collectedCoins = this.physics.add.group()
-      
       for (let i = 0; i < 30; i++) {
-        const x = 200 + (i * 100)
-        if ((x > 570 && x < 630) || (x > 1170 && x < 1230) || (x > 1770 && x < 1830)) {
-          continue
-        }
-        const y = Phaser.Math.Between(200, 450)
-        const coin = this.add.image(x, y, 'coin')
-        coin.setDisplaySize(16, 16)
+        const x = 200 + i * 100
+        if ((x > 570 && x < 630) || (x > 1170 && x < 1230) || (x > 1770 && x < 1830)) continue
+        const coin = this.add.image(x, Phaser.Math.Between(200, 450), 'coin').setDisplaySize(16, 16)
         collectedCoins.add(coin)
       }
 
       // Enemies
       enemies = this.physics.add.group()
-      
       createGoomba(this, 500, 520, enemies)
       createGoomba(this, 900, 520, enemies)
       createGoomba(this, 1300, 520, enemies)
       createGoomba(this, 1700, 520, enemies)
-      
       createKoopa(this, 1100, 520, enemies)
       createKoopa(this, 1600, 520, enemies)
 
-      // Power-ups group
+      // Power-ups
       powerUps = this.physics.add.group()
 
       // Flag pole
       flagPole = this.add.rectangle(3000, 400, 20, 300, 0x000000)
       this.physics.add.existing(flagPole, true)
-      const flag = this.add.rectangle(3020, 300, 40, 30, 0xff0000)
+      this.add.rectangle(3020, 300, 40, 30, 0xff0000)
 
       // Collisions
       this.physics.add.collider(player, platforms)
@@ -294,11 +205,8 @@ export default function MarioGame() {
       this.physics.add.collider(enemies, pipes)
       this.physics.add.collider(powerUps, platforms)
       this.physics.add.collider(powerUps, bricks)
-      this.physics.add.collider(powerUps, pipes)
 
-      // Enemy behavior
       enemies.children.entries.forEach(enemy => {
-        enemy.body.setBounce(0)
         enemy.body.setVelocityX(-80)
       })
 
@@ -308,78 +216,48 @@ export default function MarioGame() {
       this.physics.add.overlap(player, powerUps, collectPowerUp, null, this)
       this.physics.add.overlap(player, flagPole, reachFlag, null, this)
 
-      // Controls
       cursors = this.input.keyboard.createCursorKeys()
 
       // UI
       scoreText = this.add.text(16, 16, 'Score: 0', {
-        fontSize: '20px',
-        fill: '#fff',
-        fontFamily: 'Arial',
-        stroke: '#000',
-        strokeThickness: 4
+        fontSize: '20px', fill: '#fff', fontFamily: 'Arial', stroke: '#000', strokeThickness: 4
       }).setScrollFactor(0)
 
       livesText = this.add.text(16, 45, 'Lives: ♥ ♥ ♥', {
-        fontSize: '20px',
-        fill: '#ff0000',
-        fontFamily: 'Arial',
-        stroke: '#000',
-        strokeThickness: 4
+        fontSize: '20px', fill: '#ff0000', fontFamily: 'Arial', stroke: '#000', strokeThickness: 4
       }).setScrollFactor(0)
 
       coinsText = this.add.text(16, 74, 'Coins: 0', {
-        fontSize: '20px',
-        fill: '#ffd700',
-        fontFamily: 'Arial',
-        stroke: '#000',
-        strokeThickness: 4
+        fontSize: '20px', fill: '#ffd700', fontFamily: 'Arial', stroke: '#000', strokeThickness: 4
       }).setScrollFactor(0)
 
-      // Camera follow
       this.cameras.main.startFollow(player, false, 0.1, 0.1)
       this.cameras.main.setBounds(0, 0, 3200, 576)
     }
 
-    function createPipe(scene, x, y, group) {
-      const pipeHeight = 576 - y
-      const pipe = scene.add.image(x, y + pipeHeight/2, 'pipe')
-      pipe.setDisplaySize(64, pipeHeight)
-      group.add(pipe)
-    }
-
     function createGoomba(scene, x, y, group) {
-      const goomba = scene.add.image(x, y, 'goomba')
-      goomba.setDisplaySize(32, 32)
-      goomba.setData('type', 'goomba')
-      goomba.setData('alive', true)
+      const goomba = scene.add.image(x, y, 'goomba').setDisplaySize(32, 32)
+      goomba.setData('type', 'goomba').setData('alive', true)
       group.add(goomba)
     }
 
     function createKoopa(scene, x, y, group) {
-      const koopa = scene.add.image(x, y, 'koopa')
-      koopa.setDisplaySize(32, 40)
-      koopa.setData('type', 'koopa')
-      koopa.setData('alive', true)
+      const koopa = scene.add.image(x, y, 'koopa').setDisplaySize(32, 40)
+      koopa.setData('type', 'koopa').setData('alive', true)
       group.add(koopa)
     }
 
     function hitQuestionBlock(player, block) {
       if (block.getData('used')) return
-
       const blockType = block.getData('type')
-      block.setData('used', true)
-      block.setTexture('question-used')
+      block.setData('used', true).setTexture('question-used')
 
       this.tweens.add({
-        targets: block,
-        y: block.y - 10,
-        duration: 100,
-        yoyo: true
+        targets: block, y: block.y - 10, duration: 100, yoyo: true
       })
 
       if (blockType === 'coin') {
-        currentCoins += 1
+        currentCoins++
         currentScore += 100
         coinsText.setText('Coins: ' + currentCoins)
         scoreText.setText('Score: ' + currentScore)
@@ -391,17 +269,15 @@ export default function MarioGame() {
     }
 
     function spawnMushroom(scene, x, y) {
-      const mushroom = scene.add.image(x, y, 'mushroom')
-      mushroom.setDisplaySize(24, 24)
+      const mushroom = scene.add.image(x, y, 'mushroom').setDisplaySize(24, 24)
       powerUps.add(mushroom)
-      mushroom.body.setVelocityX(100)
-      mushroom.body.setBounce(0)
+      mushroom.body.setVelocityX(100).setBounce(0)
       mushroom.setData('type', 'mushroom')
     }
 
     function collectCoin(player, coin) {
       coin.destroy()
-      currentCoins += 1
+      currentCoins++
       currentScore += 100
       coinsText.setText('Coins: ' + currentCoins)
       scoreText.setText('Score: ' + currentScore)
@@ -410,7 +286,7 @@ export default function MarioGame() {
       
       if (currentCoins >= 100) {
         currentCoins = 0
-        currentLives += 1
+        currentLives++
         livesText.setText('Lives: ' + '♥ '.repeat(currentLives))
         setLives(currentLives)
       }
@@ -418,12 +294,9 @@ export default function MarioGame() {
 
     function collectPowerUp(player, powerUp) {
       powerUp.destroy()
-      const type = powerUp.getData('type')
-      
-      if (type === 'mushroom' && marioState === 'small') {
+      if (powerUp.getData('type') === 'mushroom' && marioState === 'small') {
         marioState = 'big'
-        player.setTexture('mario-big')
-        player.setDisplaySize(32, 48)
+        player.setTexture('mario-big').setDisplaySize(32, 48)
         player.body.setSize(28, 48)
         currentScore += 1000
         scoreText.setText('Score: ' + currentScore)
@@ -435,25 +308,18 @@ export default function MarioGame() {
       if (!enemy.getData('alive')) return
 
       if (player.body.velocity.y > 0 && player.y < enemy.y - 10) {
-        enemy.setData('alive', false)
-        enemy.setAlpha(0.5)
-        enemy.setTint(0x888888)
-        enemy.body.setVelocity(0, 0)
-        enemy.body.enable = false
-        
+        enemy.setData('alive', false).setAlpha(0.5).setTint(0x888888)
+        enemy.body.setVelocity(0, 0).enable = false
         player.setVelocityY(-300)
         currentScore += 200
         scoreText.setText('Score: ' + currentScore)
         setScore(currentScore)
         
-        this.time.delayedCall(500, () => {
-          enemy.destroy()
-        })
+        this.time.delayedCall(500, () => enemy.destroy())
       } else {
         if (marioState === 'big') {
           marioState = 'small'
-          player.setTexture('mario-small')
-          player.setDisplaySize(32, 32)
+          player.setTexture('mario-small').setDisplaySize(32, 32)
           player.body.setSize(28, 32)
         } else {
           loseLife(this)
@@ -462,40 +328,29 @@ export default function MarioGame() {
     }
 
     function loseLife(scene) {
-      currentLives -= 1
+      currentLives--
       livesText.setText('Lives: ' + '♥ '.repeat(Math.max(0, currentLives)))
       setLives(currentLives)
       
       if (currentLives <= 0) {
         gameOver(scene)
       } else {
-        player.setPosition(100, 450)
-        player.setVelocity(0, 0)
+        player.setPosition(100, 450).setVelocity(0, 0)
       }
     }
 
     function gameOver(scene) {
       scene.physics.pause()
       player.setTint(0xff0000)
-      
-      const gameOverText = scene.add.text(scene.cameras.main.scrollX + 512, 288, 'GAME OVER', {
-        fontSize: '64px',
-        fill: '#fff',
-        fontFamily: 'Arial',
-        stroke: '#000',
-        strokeThickness: 8
+      scene.add.text(scene.cameras.main.scrollX + 512, 288, 'GAME OVER', {
+        fontSize: '64px', fill: '#fff', fontFamily: 'Arial', stroke: '#000', strokeThickness: 8
       }).setOrigin(0.5)
     }
 
     function reachFlag(player, flag) {
       this.physics.pause()
-      
-      const winText = this.add.text(this.cameras.main.scrollX + 512, 288, 'LEVEL COMPLETE!', {
-        fontSize: '48px',
-        fill: '#fff',
-        fontFamily: 'Arial',
-        stroke: '#000',
-        strokeThickness: 8
+      this.add.text(this.cameras.main.scrollX + 512, 288, 'LEVEL COMPLETE!', {
+        fontSize: '48px', fill: '#fff', fontFamily: 'Arial', stroke: '#000', strokeThickness: 8
       }).setOrigin(0.5)
       
       currentScore += 5000
@@ -530,44 +385,27 @@ export default function MarioGame() {
     }
 
     return () => {
-      if (game) {
-        game.destroy(true)
-      }
+      if (game) game.destroy(true)
     }
   }, [Phaser])
 
   return (
     <div style={{ 
-      width: '100%', 
-      height: '100vh', 
-      display: 'flex', 
-      flexDirection: 'column',
-      alignItems: 'center', 
-      justifyContent: 'center',
-      backgroundColor: '#000',
-      overflow: 'hidden'
+      width: '100%', height: '100vh', display: 'flex', flexDirection: 'column',
+      alignItems: 'center', justifyContent: 'center', backgroundColor: '#000', overflow: 'hidden'
     }}>
       <div style={{ 
-        marginBottom: '10px',
-        color: '#fff',
-        fontSize: '24px',
-        fontFamily: 'Arial, sans-serif',
-        textAlign: 'center'
+        marginBottom: '10px', color: '#fff', fontSize: '24px',
+        fontFamily: 'Arial, sans-serif', textAlign: 'center'
       }}>
         <h1 style={{ margin: '5px 0' }}>🍄 SUPER MARIO BROS</h1>
         <div style={{ fontSize: '18px' }}>
           Score: {score} | Coins: {coins} | Lives: {lives}
         </div>
       </div>
-      <div ref={gameRef} style={{ 
-        maxWidth: '100%',
-        maxHeight: 'calc(100vh - 120px)'
-      }} />
+      <div ref={gameRef} style={{ maxWidth: '100%', maxHeight: 'calc(100vh - 120px)' }} />
       <div style={{
-        marginTop: '10px',
-        color: '#fff',
-        textAlign: 'center',
-        fontSize: '12px'
+        marginTop: '10px', color: '#fff', textAlign: 'center', fontSize: '12px'
       }}>
         <p>← → Move | ↑ Jump | Jump on enemies! | Collect 100 coins for 1UP!</p>
       </div>

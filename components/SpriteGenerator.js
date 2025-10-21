@@ -1,294 +1,306 @@
-// Sprite Generator - Creates pixel art sprites as base64 data URLs
+// Sprite Generator - Creates pixel art sprites as SVG data URLs
+
+function svgToBase64(svg) {
+  return 'data:image/svg+xml;base64,' + btoa(unescape(encodeURIComponent(svg)))
+}
+
+function createPixelRect(x, y, size, color) {
+  return `<rect x="${x}" y="${y}" width="${size}" height="${size}" fill="${color}" />`
+}
 
 export function generateMarioSprite(state = 'small') {
-  const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
-  ctx.imageSmoothingEnabled = false
-  
   if (state === 'small') {
-    canvas.width = 16
-    canvas.height = 16
-    ctx.clearRect(0, 0, 16, 16)
-    
-    const pixels = [
-      [0,0,0,1,1,1,1,1,0,0,0,0,0,0,0,0],
-      [0,0,1,1,1,1,1,1,1,1,1,0,0,0,0,0],
-      [0,0,2,2,2,3,3,2,3,0,0,0,0,0,0,0],
-      [0,2,3,2,3,3,3,2,3,3,3,0,0,0,0,0],
-      [0,2,3,2,2,3,3,3,2,3,3,3,0,0,0,0],
-      [0,2,2,3,3,3,3,2,2,2,2,0,0,0,0,0],
-      [0,0,0,3,3,3,3,3,3,3,0,0,0,0,0,0],
-      [0,0,1,1,4,1,1,1,0,0,0,0,0,0,0,0],
-      [0,1,1,1,4,1,1,4,1,1,1,0,0,0,0,0],
-      [1,1,1,1,4,4,4,4,1,1,1,1,0,0,0,0],
-      [3,3,1,4,5,4,4,5,4,1,3,3,0,0,0,0],
-      [3,3,3,4,4,4,4,4,4,3,3,3,0,0,0,0],
-      [3,3,4,4,4,4,4,4,4,4,3,3,0,0,0,0],
-      [0,0,4,4,4,0,0,4,4,4,0,0,0,0,0,0],
-      [0,2,2,2,0,0,0,0,2,2,2,0,0,0,0,0],
-      [2,2,2,2,0,0,0,0,2,2,2,2,0,0,0,0],
-    ]
-    
-    const colors = {
-      0: null,
-      1: '#FF0000',
-      2: '#8B4513',
-      3: '#FFE4C4',
-      4: '#0000FF',
-      5: '#FFD700',
-    }
-    
-    pixels.forEach((row, y) => {
-      row.forEach((pixel, x) => {
-        if (colors[pixel]) {
-          ctx.fillStyle = colors[pixel]
-          ctx.fillRect(x, y, 1, 1)
-        }
-      })
-    })
+    const svg = `<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+      <rect width="16" height="16" fill="transparent"/>
+      ${createPixelRect(3, 0, 1, '#FF0000')}
+      ${createPixelRect(4, 0, 1, '#FF0000')}
+      ${createPixelRect(5, 0, 1, '#FF0000')}
+      ${createPixelRect(6, 0, 1, '#FF0000')}
+      ${createPixelRect(7, 0, 1, '#FF0000')}
+      ${createPixelRect(2, 1, 1, '#FF0000')}
+      ${createPixelRect(3, 1, 1, '#FF0000')}
+      ${createPixelRect(4, 1, 1, '#FF0000')}
+      ${createPixelRect(5, 1, 1, '#FF0000')}
+      ${createPixelRect(6, 1, 1, '#FF0000')}
+      ${createPixelRect(7, 1, 1, '#FF0000')}
+      ${createPixelRect(8, 1, 1, '#FF0000')}
+      ${createPixelRect(9, 1, 1, '#FF0000')}
+      ${createPixelRect(10, 1, 1, '#FF0000')}
+      ${createPixelRect(2, 2, 1, '#FFE4C4')}
+      ${createPixelRect(3, 2, 1, '#FFE4C4')}
+      ${createPixelRect(4, 2, 1, '#FFE4C4')}
+      ${createPixelRect(5, 2, 1, '#0000FF')}
+      ${createPixelRect(6, 2, 1, '#0000FF')}
+      ${createPixelRect(7, 2, 1, '#FFE4C4')}
+      ${createPixelRect(8, 2, 1, '#0000FF')}
+      ${createPixelRect(1, 3, 1, '#FFE4C4')}
+      ${createPixelRect(2, 3, 1, '#0000FF')}
+      ${createPixelRect(3, 3, 1, '#FFE4C4')}
+      ${createPixelRect(4, 3, 1, '#0000FF')}
+      ${createPixelRect(5, 3, 1, '#0000FF')}
+      ${createPixelRect(6, 3, 1, '#0000FF')}
+      ${createPixelRect(7, 3, 1, '#FFE4C4')}
+      ${createPixelRect(8, 3, 1, '#0000FF')}
+      ${createPixelRect(9, 3, 1, '#0000FF')}
+      ${createPixelRect(10, 3, 1, '#0000FF')}
+      ${createPixelRect(1, 4, 1, '#FFE4C4')}
+      ${createPixelRect(2, 4, 1, '#0000FF')}
+      ${createPixelRect(3, 4, 1, '#FFE4C4')}
+      ${createPixelRect(4, 4, 1, '#FFE4C4')}
+      ${createPixelRect(5, 4, 1, '#0000FF')}
+      ${createPixelRect(6, 4, 1, '#0000FF')}
+      ${createPixelRect(7, 4, 1, '#0000FF')}
+      ${createPixelRect(8, 4, 1, '#FFE4C4')}
+      ${createPixelRect(9, 4, 1, '#0000FF')}
+      ${createPixelRect(10, 4, 1, '#0000FF')}
+      ${createPixelRect(11, 4, 1, '#0000FF')}
+      ${createPixelRect(1, 5, 1, '#FFE4C4')}
+      ${createPixelRect(2, 5, 1, '#FFE4C4')}
+      ${createPixelRect(3, 5, 1, '#0000FF')}
+      ${createPixelRect(4, 5, 1, '#0000FF')}
+      ${createPixelRect(5, 5, 1, '#0000FF')}
+      ${createPixelRect(6, 5, 1, '#0000FF')}
+      ${createPixelRect(7, 5, 1, '#FFE4C4')}
+      ${createPixelRect(8, 5, 1, '#FFE4C4')}
+      ${createPixelRect(9, 5, 1, '#FFE4C4')}
+      ${createPixelRect(10, 5, 1, '#FFE4C4')}
+      ${createPixelRect(2, 6, 1, '#0000FF')}
+      ${createPixelRect(3, 6, 1, '#0000FF')}
+      ${createPixelRect(4, 6, 1, '#0000FF')}
+      ${createPixelRect(5, 6, 1, '#0000FF')}
+      ${createPixelRect(6, 6, 1, '#0000FF')}
+      ${createPixelRect(7, 6, 1, '#0000FF')}
+      ${createPixelRect(8, 6, 1, '#0000FF')}
+      ${createPixelRect(9, 6, 1, '#0000FF')}
+      ${createPixelRect(2, 7, 1, '#FF0000')}
+      ${createPixelRect(3, 7, 1, '#FF0000')}
+      ${createPixelRect(4, 7, 1, '#0000FF')}
+      ${createPixelRect(5, 7, 1, '#FF0000')}
+      ${createPixelRect(6, 7, 1, '#FF0000')}
+      ${createPixelRect(7, 7, 1, '#FF0000')}
+      ${createPixelRect(1, 8, 1, '#FF0000')}
+      ${createPixelRect(2, 8, 1, '#FF0000')}
+      ${createPixelRect(3, 8, 1, '#FF0000')}
+      ${createPixelRect(4, 8, 1, '#0000FF')}
+      ${createPixelRect(5, 8, 1, '#FF0000')}
+      ${createPixelRect(6, 8, 1, '#FF0000')}
+      ${createPixelRect(7, 8, 1, '#0000FF')}
+      ${createPixelRect(8, 8, 1, '#FF0000')}
+      ${createPixelRect(9, 8, 1, '#FF0000')}
+      ${createPixelRect(10, 8, 1, '#FF0000')}
+      ${createPixelRect(0, 9, 1, '#FF0000')}
+      ${createPixelRect(1, 9, 1, '#FF0000')}
+      ${createPixelRect(2, 9, 1, '#FF0000')}
+      ${createPixelRect(3, 9, 1, '#FF0000')}
+      ${createPixelRect(4, 9, 1, '#0000FF')}
+      ${createPixelRect(5, 9, 1, '#0000FF')}
+      ${createPixelRect(6, 9, 1, '#0000FF')}
+      ${createPixelRect(7, 9, 1, '#0000FF')}
+      ${createPixelRect(8, 9, 1, '#FF0000')}
+      ${createPixelRect(9, 9, 1, '#FF0000')}
+      ${createPixelRect(10, 9, 1, '#FF0000')}
+      ${createPixelRect(11, 9, 1, '#FF0000')}
+      ${createPixelRect(0, 10, 1, '#FFE4C4')}
+      ${createPixelRect(1, 10, 1, '#FFE4C4')}
+      ${createPixelRect(2, 10, 1, '#FF0000')}
+      ${createPixelRect(3, 10, 1, '#0000FF')}
+      ${createPixelRect(4, 10, 1, '#FFD700')}
+      ${createPixelRect(5, 10, 1, '#0000FF')}
+      ${createPixelRect(6, 10, 1, '#0000FF')}
+      ${createPixelRect(7, 10, 1, '#FFD700')}
+      ${createPixelRect(8, 10, 1, '#0000FF')}
+      ${createPixelRect(9, 10, 1, '#FF0000')}
+      ${createPixelRect(10, 10, 1, '#FFE4C4')}
+      ${createPixelRect(11, 10, 1, '#FFE4C4')}
+      ${createPixelRect(0, 11, 1, '#FFE4C4')}
+      ${createPixelRect(1, 11, 1, '#FFE4C4')}
+      ${createPixelRect(2, 11, 1, '#FFE4C4')}
+      ${createPixelRect(3, 11, 1, '#0000FF')}
+      ${createPixelRect(4, 11, 1, '#0000FF')}
+      ${createPixelRect(5, 11, 1, '#0000FF')}
+      ${createPixelRect(6, 11, 1, '#0000FF')}
+      ${createPixelRect(7, 11, 1, '#0000FF')}
+      ${createPixelRect(8, 11, 1, '#0000FF')}
+      ${createPixelRect(9, 11, 1, '#FFE4C4')}
+      ${createPixelRect(10, 11, 1, '#FFE4C4')}
+      ${createPixelRect(11, 11, 1, '#FFE4C4')}
+      ${createPixelRect(0, 12, 1, '#FFE4C4')}
+      ${createPixelRect(1, 12, 1, '#FFE4C4')}
+      ${createPixelRect(2, 12, 1, '#0000FF')}
+      ${createPixelRect(3, 12, 1, '#0000FF')}
+      ${createPixelRect(4, 12, 1, '#0000FF')}
+      ${createPixelRect(5, 12, 1, '#0000FF')}
+      ${createPixelRect(6, 12, 1, '#0000FF')}
+      ${createPixelRect(7, 12, 1, '#0000FF')}
+      ${createPixelRect(8, 12, 1, '#0000FF')}
+      ${createPixelRect(9, 12, 1, '#0000FF')}
+      ${createPixelRect(10, 12, 1, '#FFE4C4')}
+      ${createPixelRect(11, 12, 1, '#FFE4C4')}
+      ${createPixelRect(2, 13, 1, '#0000FF')}
+      ${createPixelRect(3, 13, 1, '#0000FF')}
+      ${createPixelRect(4, 13, 1, '#0000FF')}
+      ${createPixelRect(8, 13, 1, '#0000FF')}
+      ${createPixelRect(9, 13, 1, '#0000FF')}
+      ${createPixelRect(10, 13, 1, '#0000FF')}
+      ${createPixelRect(1, 14, 1, '#8B4513')}
+      ${createPixelRect(2, 14, 1, '#8B4513')}
+      ${createPixelRect(3, 14, 1, '#8B4513')}
+      ${createPixelRect(8, 14, 1, '#8B4513')}
+      ${createPixelRect(9, 14, 1, '#8B4513')}
+      ${createPixelRect(10, 14, 1, '#8B4513')}
+      ${createPixelRect(0, 15, 1, '#8B4513')}
+      ${createPixelRect(1, 15, 1, '#8B4513')}
+      ${createPixelRect(2, 15, 1, '#8B4513')}
+      ${createPixelRect(3, 15, 1, '#8B4513')}
+      ${createPixelRect(8, 15, 1, '#8B4513')}
+      ${createPixelRect(9, 15, 1, '#8B4513')}
+      ${createPixelRect(10, 15, 1, '#8B4513')}
+      ${createPixelRect(11, 15, 1, '#8B4513')}
+    </svg>`
+    return svgToBase64(svg)
   } else if (state === 'big') {
-    canvas.width = 16
-    canvas.height = 32
-    ctx.clearRect(0, 0, 16, 32)
-    
-    ctx.fillStyle = '#FF0000'
-    ctx.fillRect(2, 2, 12, 8)
-    ctx.fillStyle = '#FFE4C4'
-    ctx.fillRect(2, 10, 12, 6)
-    ctx.fillStyle = '#FF0000'
-    ctx.fillRect(2, 16, 12, 8)
-    ctx.fillStyle = '#0000FF'
-    ctx.fillRect(2, 24, 5, 8)
-    ctx.fillRect(9, 24, 5, 8)
+    const svg = `<svg width="16" height="32" xmlns="http://www.w3.org/2000/svg">
+      <rect width="16" height="32" fill="transparent"/>
+      ${createPixelRect(2, 2, 1, '#FF0000')}
+      ${createPixelRect(3, 2, 1, '#FF0000')}
+      ${createPixelRect(4, 2, 1, '#FF0000')}
+      ${createPixelRect(5, 2, 1, '#FF0000')}
+      ${createPixelRect(6, 2, 1, '#FF0000')}
+      ${createPixelRect(7, 2, 1, '#FF0000')}
+      ${createPixelRect(8, 2, 1, '#FF0000')}
+      ${createPixelRect(9, 2, 1, '#FF0000')}
+      ${createPixelRect(10, 2, 1, '#FF0000')}
+      ${createPixelRect(11, 2, 1, '#FF0000')}
+      ${createPixelRect(12, 2, 1, '#FF0000')}
+      ${createPixelRect(13, 2, 1, '#FF0000')}
+      ${[...Array(12)].map((_, i) => createPixelRect(2 + i, 3, 1, '#FF0000')).join('')}
+      ${[...Array(12)].map((_, i) => createPixelRect(2 + i, 9, 1, '#0000FF')).join('')}
+      ${[...Array(12)].map((_, i) => createPixelRect(2 + i, 15, 1, '#0000FF')).join('')}
+      ${createPixelRect(2, 23, 1, '#0000FF')}
+      ${createPixelRect(3, 23, 1, '#0000FF')}
+      ${createPixelRect(4, 23, 1, '#0000FF')}
+      ${createPixelRect(5, 23, 1, '#0000FF')}
+      ${createPixelRect(9, 23, 1, '#0000FF')}
+      ${createPixelRect(10, 23, 1, '#0000FF')}
+      ${createPixelRect(11, 23, 1, '#0000FF')}
+      ${createPixelRect(12, 23, 1, '#0000FF')}
+    </svg>`
+    return svgToBase64(svg)
   }
-  
-  return canvas.toDataURL('image/png')
 }
 
 export function generateGoombaSprite() {
-  const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
-  ctx.imageSmoothingEnabled = false
-  canvas.width = 16
-  canvas.height = 16
-  ctx.clearRect(0, 0, 16, 16)
-  
-  const pixels = [
-    [0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0],
-    [0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0],
-    [0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,1,1,2,2,1,1,1,1,1,1,2,2,1,1,0],
-    [1,1,1,2,3,2,1,1,1,1,2,3,2,1,1,1],
-    [1,1,1,2,2,2,1,1,1,1,2,2,2,1,1,1],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,4,4,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,4,4,4,4,1,1,1,1,1,1],
-    [1,1,1,1,1,1,4,4,4,4,1,1,1,1,1,1],
-    [1,1,1,1,1,1,1,4,4,1,1,1,1,1,1,1],
-    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,0,5,5,1,1,1,1,1,1,1,1,5,5,0,0],
-    [0,5,5,5,5,0,0,0,0,0,0,5,5,5,5,0],
-    [5,5,5,5,5,5,0,0,0,0,5,5,5,5,5,5],
-  ]
-  
-  const colors = {
-    0: null,
-    1: '#8B4513',
-    2: '#FFFFFF',
-    3: '#000000',
-    4: '#654321',
-    5: '#D2691E',
-  }
-  
-  pixels.forEach((row, y) => {
-    row.forEach((pixel, x) => {
-      if (colors[pixel]) {
-        ctx.fillStyle = colors[pixel]
-        ctx.fillRect(x, y, 1, 1)
-      }
-    })
-  })
-  
-  return canvas.toDataURL('image/png')
+  const svg = `<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+    <rect width="16" height="16" fill="transparent"/>
+    ${[...Array(6)].map((_, i) => createPixelRect(4 + i, 0, 1, '#8B4513')).join('')}
+    ${[...Array(8)].map((_, i) => createPixelRect(3 + i, 1, 1, '#8B4513')).join('')}
+    ${[...Array(10)].map((_, i) => createPixelRect(2 + i, 2, 1, '#8B4513')).join('')}
+    ${createPixelRect(1, 3, 1, '#8B4513')}
+    ${[...Array(12)].map((_, i) => createPixelRect(1 + i, 3, 1, '#8B4513')).join('')}
+    ${createPixelRect(1, 4, 1, '#8B4513')}
+    ${createPixelRect(3, 4, 1, '#FFFFFF')}
+    ${createPixelRect(4, 4, 1, '#FFFFFF')}
+    ${createPixelRect(11, 4, 1, '#FFFFFF')}
+    ${createPixelRect(12, 4, 1, '#FFFFFF')}
+    ${createPixelRect(13, 4, 1, '#8B4513')}
+    ${createPixelRect(1, 5, 1, '#654321')}
+    ${createPixelRect(2, 5, 1, '#8B4513')}
+    ${createPixelRect(3, 5, 1, '#FFFFFF')}
+    ${createPixelRect(4, 5, 1, '#000000')}
+    ${createPixelRect(11, 5, 1, '#FFFFFF')}
+    ${createPixelRect(12, 5, 1, '#000000')}
+    ${createPixelRect(13, 5, 1, '#8B4513')}
+    ${createPixelRect(14, 5, 1, '#654321')}
+  </svg>`
+  return svgToBase64(svg)
 }
 
 export function generateKoopaSprite() {
-  const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
-  ctx.imageSmoothingEnabled = false
-  canvas.width = 16
-  canvas.height = 24
-  ctx.clearRect(0, 0, 16, 24)
-  
-  ctx.fillStyle = '#00AA00'
-  ctx.fillRect(2, 8, 12, 12)
-  
-  ctx.fillStyle = '#FFFF00'
-  ctx.fillRect(4, 10, 8, 2)
-  ctx.fillRect(4, 14, 8, 2)
-  
-  ctx.fillStyle = '#90EE90'
-  ctx.fillRect(4, 2, 8, 6)
-  
-  ctx.fillStyle = '#FFFFFF'
-  ctx.fillRect(5, 3, 2, 2)
-  ctx.fillRect(9, 3, 2, 2)
-  
-  ctx.fillStyle = '#000000'
-  ctx.fillRect(6, 4, 1, 1)
-  ctx.fillRect(10, 4, 1, 1)
-  
-  return canvas.toDataURL('image/png')
+  const svg = `<svg width="16" height="24" xmlns="http://www.w3.org/2000/svg">
+    <rect width="16" height="24" fill="transparent"/>
+    ${[...Array(8)].map((_, i) => createPixelRect(4 + i, 2, 1, '#90EE90')).join('')}
+    ${[...Array(2)].map((_, i) => createPixelRect(5 + i, 3, 1, '#FFFFFF')).join('')}
+    ${[...Array(2)].map((_, i) => createPixelRect(9 + i, 3, 1, '#FFFFFF')).join('')}
+    ${[...Array(2)].map((_, i) => createPixelRect(6 + i, 4, 1, '#000000')).join('')}
+    ${[...Array(2)].map((_, i) => createPixelRect(10 + i, 4, 1, '#000000')).join('')}
+    ${[...Array(12)].map((_, i) => createPixelRect(2 + i, 8, 1, '#00AA00')).join('')}
+    ${[...Array(8)].map((_, i) => createPixelRect(4 + i, 10, 1, '#FFFF00')).join('')}
+    ${[...Array(8)].map((_, i) => createPixelRect(4 + i, 14, 1, '#FFFF00')).join('')}
+  </svg>`
+  return svgToBase64(svg)
 }
 
 export function generateCoinSprite() {
-  const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
-  ctx.imageSmoothingEnabled = false
-  canvas.width = 16
-  canvas.height = 16
-  ctx.clearRect(0, 0, 16, 16)
-  
-  ctx.fillStyle = '#FFD700'
-  ctx.fillRect(5, 3, 6, 10)
-  ctx.fillRect(4, 5, 8, 6)
-  ctx.fillRect(3, 6, 10, 4)
-  
-  ctx.fillStyle = '#FFA500'
-  ctx.fillRect(6, 5, 4, 6)
-  ctx.fillRect(5, 6, 6, 4)
-  
-  ctx.fillStyle = '#FFFF00'
-  ctx.fillRect(6, 5, 2, 2)
-  
-  return canvas.toDataURL('image/png')
+  const svg = `<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+    <rect width="16" height="16" fill="transparent"/>
+    ${[...Array(6)].map((_, i) => createPixelRect(5 + i, 3, 1, '#FFD700')).join('')}
+    ${[...Array(8)].map((_, i) => createPixelRect(4 + i, 5, 1, '#FFD700')).join('')}
+    ${[...Array(10)].map((_, i) => createPixelRect(3 + i, 6, 1, '#FFD700')).join('')}
+    ${[...Array(8)].map((_, i) => createPixelRect(4 + i, 7, 1, '#FFD700')).join('')}
+    ${[...Array(6)].map((_, i) => createPixelRect(5 + i, 8, 1, '#FFD700')).join('')}
+    ${createPixelRect(6, 5, 1, '#FFA500')}
+    ${createPixelRect(7, 5, 1, '#FFA500')}
+    ${createPixelRect(8, 5, 1, '#FFA500')}
+    ${createPixelRect(9, 5, 1, '#FFA500')}
+  </svg>`
+  return svgToBase64(svg)
 }
 
 export function generateMushroomSprite() {
-  const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
-  ctx.imageSmoothingEnabled = false
-  canvas.width = 16
-  canvas.height = 16
-  ctx.clearRect(0, 0, 16, 16)
-  
-  const pixels = [
-    [0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0],
-    [0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-    [0,1,1,2,2,1,1,1,1,1,1,2,2,1,1,0],
-    [1,1,1,2,2,1,1,1,1,1,1,2,2,1,1,1],
-    [1,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],
-    [1,1,1,1,1,1,2,2,2,2,1,1,1,1,1,1],
-    [1,1,1,1,1,1,2,2,2,2,1,1,1,1,1,1],
-    [0,1,1,1,1,1,1,1,1,1,1,1,1,1,1,0],
-    [0,0,1,1,1,1,1,1,1,1,1,1,1,1,0,0],
-    [0,0,0,3,3,3,3,3,3,3,3,3,3,0,0,0],
-    [0,0,0,3,3,3,3,3,3,3,3,3,3,0,0,0],
-    [0,0,0,3,3,3,3,3,3,3,3,3,3,0,0,0],
-    [0,0,0,3,3,3,3,3,3,3,3,3,3,0,0,0],
-    [0,0,0,0,3,3,3,3,3,3,3,3,0,0,0,0],
-    [0,0,0,0,0,3,3,3,3,3,3,0,0,0,0,0],
-    [0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0],
-  ]
-  
-  const colors = {
-    0: null,
-    1: '#FF0000',
-    2: '#FFFFFF',
-    3: '#FFE4C4',
-  }
-  
-  pixels.forEach((row, y) => {
-    row.forEach((pixel, x) => {
-      if (colors[pixel]) {
-        ctx.fillStyle = colors[pixel]
-        ctx.fillRect(x, y, 1, 1)
-      }
-    })
-  })
-  
-  return canvas.toDataURL('image/png')
+  const svg = `<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+    <rect width="16" height="16" fill="transparent"/>
+    ${[...Array(6)].map((_, i) => createPixelRect(4 + i, 0, 1, '#FF0000')).join('')}
+    ${[...Array(8)].map((_, i) => createPixelRect(3 + i, 1, 1, '#FF0000')).join('')}
+    ${[...Array(10)].map((_, i) => createPixelRect(2 + i, 2, 1, '#FF0000')).join('')}
+    ${createPixelRect(2, 3, 1, '#FF0000')}
+    ${[...Array(12)].map((_, i) => createPixelRect(1 + i, 3, 1, '#FF0000')).join('')}
+    ${[...Array(12)].map((_, i) => createPixelRect(2 + i, 4, 1, '#FFE4C4')).join('')}
+    ${[...Array(10)].map((_, i) => createPixelRect(3 + i, 14, 1, '#FFE4C4')).join('')}
+  </svg>`
+  return svgToBase64(svg)
 }
 
 export function generateBrickSprite() {
-  const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
-  ctx.imageSmoothingEnabled = false
-  canvas.width = 16
-  canvas.height = 16
-  ctx.clearRect(0, 0, 16, 16)
-  
-  ctx.fillStyle = '#CD853F'
-  ctx.fillRect(0, 0, 16, 16)
-  
-  ctx.fillStyle = '#8B4513'
-  ctx.fillRect(0, 5, 16, 1)
-  ctx.fillRect(0, 11, 16, 1)
-  ctx.fillRect(7, 0, 1, 5)
-  ctx.fillRect(3, 6, 1, 5)
-  ctx.fillRect(11, 6, 1, 5)
-  ctx.fillRect(7, 12, 1, 4)
-  
-  return canvas.toDataURL('image/png')
+  const svg = `<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+    <rect width="16" height="16" fill="#CD853F"/>
+    <line x1="0" y1="5" x2="16" y2="5" stroke="#8B4513" stroke-width="1"/>
+    <line x1="0" y1="11" x2="16" y2="11" stroke="#8B4513" stroke-width="1"/>
+    <line x1="7" y1="0" x2="7" y2="5" stroke="#8B4513" stroke-width="1"/>
+    <line x1="3" y1="6" x2="3" y2="11" stroke="#8B4513" stroke-width="1"/>
+    <line x1="11" y1="6" x2="11" y2="11" stroke="#8B4513" stroke-width="1"/>
+  </svg>`
+  return svgToBase64(svg)
 }
 
 export function generateQuestionBlockSprite(used = false) {
-  const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
-  ctx.imageSmoothingEnabled = false
-  canvas.width = 16
-  canvas.height = 16
-  ctx.clearRect(0, 0, 16, 16)
-  
-  if (used) {
-    ctx.fillStyle = '#8B4513'
-    ctx.fillRect(0, 0, 16, 16)
-    ctx.fillStyle = '#654321'
-    ctx.fillRect(2, 2, 12, 12)
-  } else {
-    ctx.fillStyle = '#FFD700'
-    ctx.fillRect(0, 0, 16, 16)
-    
-    ctx.fillStyle = '#FFFFFF'
-    ctx.fillRect(6, 3, 4, 2)
-    ctx.fillRect(8, 5, 2, 2)
-    ctx.fillRect(7, 7, 2, 2)
-    ctx.fillRect(7, 10, 2, 2)
-    
-    ctx.fillStyle = '#FFA500'
-    ctx.fillRect(1, 1, 14, 1)
-    ctx.fillRect(1, 1, 1, 14)
-  }
-  
-  return canvas.toDataURL('image/png')
+  const svg = used ? 
+    `<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+      <rect width="16" height="16" fill="#8B4513"/>
+      <rect x="2" y="2" width="12" height="12" fill="#654321"/>
+    </svg>` :
+    `<svg width="16" height="16" xmlns="http://www.w3.org/2000/svg">
+      <rect width="16" height="16" fill="#FFD700"/>
+      <rect x="6" y="3" width="4" height="2" fill="#FFFFFF"/>
+      <rect x="8" y="5" width="2" height="2" fill="#FFFFFF"/>
+      <rect x="7" y="7" width="2" height="2" fill="#FFFFFF"/>
+      <rect x="7" y="10" width="2" height="2" fill="#FFFFFF"/>
+      <line x1="1" y1="1" x2="15" y2="1" stroke="#FFA500" stroke-width="1"/>
+      <line x1="1" y1="1" x2="1" y2="15" stroke="#FFA500" stroke-width="1"/>
+    </svg>`
+  return svgToBase64(svg)
 }
 
 export function generatePipeSprite() {
-  const canvas = document.createElement('canvas')
-  const ctx = canvas.getContext('2d')
-  ctx.imageSmoothingEnabled = false
-  canvas.width = 32
-  canvas.height = 32
-  ctx.clearRect(0, 0, 32, 32)
-  
-  ctx.fillStyle = '#00AA00'
-  ctx.fillRect(0, 8, 32, 24)
-  
-  ctx.fillStyle = '#00DD00'
-  ctx.fillRect(0, 0, 32, 10)
-  
-  ctx.fillStyle = '#44FF44'
-  ctx.fillRect(2, 2, 4, 6)
-  ctx.fillRect(2, 10, 4, 20)
-  
-  ctx.fillStyle = '#006600'
-  ctx.fillRect(26, 2, 4, 6)
-  ctx.fillRect(26, 10, 4, 20)
-  
-  ctx.fillStyle = '#000000'
-  ctx.fillRect(10, 14, 12, 8)
-  ctx.fillRect(12, 12, 8, 12)
-  
-  return canvas.toDataURL('image/png')
+  const svg = `<svg width="32" height="32" xmlns="http://www.w3.org/2000/svg">
+    <rect width="32" height="32" fill="transparent"/>
+    <rect x="0" y="8" width="32" height="24" fill="#00AA00"/>
+    <rect x="0" y="0" width="32" height="10" fill="#00DD00"/>
+    <rect x="2" y="2" width="4" height="6" fill="#44FF44"/>
+    <rect x="2" y="10" width="4" height="20" fill="#44FF44"/>
+    <rect x="26" y="2" width="4" height="6" fill="#44FF44"/>
+    <rect x="26" y="10" width="4" height="20" fill="#44FF44"/>
+    <rect x="10" y="14" width="12" height="8" fill="#000000"/>
+    <rect x="12" y="12" width="8" height="12" fill="#000000"/>
+  </svg>`
+  return svgToBase64(svg)
 }
