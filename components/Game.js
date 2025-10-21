@@ -1,6 +1,16 @@
 'use client'
 
 import { useEffect, useRef, useState } from 'react'
+import { 
+  generateMarioSprite, 
+  generateGoombaSprite, 
+  generateKoopaSprite,
+  generateCoinSprite,
+  generateMushroomSprite,
+  generateBrickSprite,
+  generateQuestionBlockSprite,
+  generatePipeSprite
+} from './SpriteGenerator'
 
 // Dynamically import SDK to avoid SSR issues
 let sdk = null
