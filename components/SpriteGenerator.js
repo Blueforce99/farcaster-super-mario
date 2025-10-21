@@ -3,10 +3,14 @@
 export function generateMarioSprite(state = 'small') {
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
+  ctx.imageSmoothingEnabled = false
   
   if (state === 'small') {
     canvas.width = 16
     canvas.height = 16
+    
+    // Fill background transparent
+    ctx.clearRect(0, 0, 16, 16)
     
     // Mario small sprite (16x16)
     const pixels = [
@@ -29,12 +33,12 @@ export function generateMarioSprite(state = 'small') {
     ]
     
     const colors = {
-      0: null,           // transparent
-      1: '#FF0000',      // red (hat/shirt)
-      2: '#8B4513',      // brown (shoes)
-      3: '#FFE4C4',      // skin
-      4: '#0000FF',      // blue (overalls)
-      5: '#FFD700',      // gold (buttons)
+      0: null,
+      1: '#FF0000',
+      2: '#8B4513',
+      3: '#FFE4C4',
+      4: '#0000FF',
+      5: '#FFD700',
     }
     
     pixels.forEach((row, y) => {
@@ -45,30 +49,18 @@ export function generateMarioSprite(state = 'small') {
         }
       })
     })
-  } else if (state === 'big') {
-    canvas.width = 16
-    canvas.height = 32
-    
-    // Big Mario (16x32) - simplified for now
-    ctx.fillStyle = '#FF0000'
-    ctx.fillRect(2, 2, 12, 8) // Hat
-    ctx.fillStyle = '#FFE4C4'
-    ctx.fillRect(2, 10, 12, 6) // Face
-    ctx.fillStyle = '#FF0000'
-    ctx.fillRect(2, 16, 12, 8) // Shirt
-    ctx.fillStyle = '#0000FF'
-    ctx.fillRect(2, 24, 5, 8) // Left leg
-    ctx.fillRect(9, 24, 5, 8) // Right leg
   }
   
-  return canvas.toDataURL()
+  return canvas.toDataURL('image/png')
 }
 
 export function generateGoombaSprite() {
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
+  ctx.imageSmoothingEnabled = false
   canvas.width = 16
   canvas.height = 16
+  ctx.clearRect(0, 0, 16, 16)
   
   const pixels = [
     [0,0,0,0,1,1,1,1,1,1,1,1,0,0,0,0],
@@ -91,11 +83,11 @@ export function generateGoombaSprite() {
   
   const colors = {
     0: null,
-    1: '#8B4513',      // brown body
-    2: '#FFFFFF',      // white eyes
-    3: '#000000',      // black pupils
-    4: '#654321',      // dark brown for eyebrows/frown
-    5: '#D2691E',      // lighter brown for feet
+    1: '#8B4513',
+    2: '#FFFFFF',
+    3: '#000000',
+    4: '#654321',
+    5: '#D2691E',
   }
   
   pixels.forEach((row, y) => {
@@ -107,25 +99,27 @@ export function generateGoombaSprite() {
     })
   })
   
-  return canvas.toDataURL()
+  return canvas.toDataURL('image/png')
 }
 
 export function generateKoopaSprite() {
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
+  ctx.imageSmoothingEnabled = false
   canvas.width = 16
   canvas.height = 24
+  ctx.clearRect(0, 0, 16, 24)
   
-  // Shell
+  // Shell (green)
   ctx.fillStyle = '#00AA00'
   ctx.fillRect(2, 8, 12, 12)
   
-  // Shell pattern
+  // Shell pattern (yellow)
   ctx.fillStyle = '#FFFF00'
   ctx.fillRect(4, 10, 8, 2)
   ctx.fillRect(4, 14, 8, 2)
   
-  // Head
+  // Head (light green)
   ctx.fillStyle = '#90EE90'
   ctx.fillRect(4, 2, 8, 6)
   
@@ -134,39 +128,47 @@ export function generateKoopaSprite() {
   ctx.fillRect(5, 3, 2, 2)
   ctx.fillRect(9, 3, 2, 2)
   
-  return canvas.toDataURL()
+  // Pupils
+  ctx.fillStyle = '#000000'
+  ctx.fillRect(6, 4, 1, 1)
+  ctx.fillRect(10, 4, 1, 1)
+  
+  return canvas.toDataURL('image/png')
 }
 
 export function generateCoinSprite() {
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
+  ctx.imageSmoothingEnabled = false
   canvas.width = 16
   canvas.height = 16
+  ctx.clearRect(0, 0, 16, 16)
   
-  // Gold circle
+  // Gold outer circle
   ctx.fillStyle = '#FFD700'
-  ctx.beginPath()
-  ctx.arc(8, 8, 6, 0, Math.PI * 2)
-  ctx.fill()
+  ctx.fillRect(5, 3, 6, 10)
+  ctx.fillRect(4, 5, 8, 6)
+  ctx.fillRect(3, 6, 10, 4)
   
-  // Inner circle
+  // Inner orange
   ctx.fillStyle = '#FFA500'
-  ctx.beginPath()
-  ctx.arc(8, 8, 4, 0, Math.PI * 2)
-  ctx.fill()
+  ctx.fillRect(6, 5, 4, 6)
+  ctx.fillRect(5, 6, 6, 4)
   
   // Highlight
   ctx.fillStyle = '#FFFF00'
   ctx.fillRect(6, 5, 2, 2)
   
-  return canvas.toDataURL()
+  return canvas.toDataURL('image/png')
 }
 
 export function generateMushroomSprite() {
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
+  ctx.imageSmoothingEnabled = false
   canvas.width = 16
   canvas.height = 16
+  ctx.clearRect(0, 0, 16, 16)
   
   const pixels = [
     [0,0,0,1,1,1,1,1,1,1,1,1,1,0,0,0],
@@ -189,9 +191,9 @@ export function generateMushroomSprite() {
   
   const colors = {
     0: null,
-    1: '#FF0000',      // red cap
-    2: '#FFFFFF',      // white spots
-    3: '#FFE4C4',      // tan stem
+    1: '#FF0000',
+    2: '#FFFFFF',
+    3: '#FFE4C4',
   }
   
   pixels.forEach((row, y) => {
@@ -203,43 +205,40 @@ export function generateMushroomSprite() {
     })
   })
   
-  return canvas.toDataURL()
+  return canvas.toDataURL('image/png')
 }
 
 export function generateBrickSprite() {
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
+  ctx.imageSmoothingEnabled = false
   canvas.width = 16
   canvas.height = 16
+  ctx.clearRect(0, 0, 16, 16)
   
   // Base brick color
-  ctx.fillStyle = '#D2691E'
+  ctx.fillStyle = '#CD853F'
   ctx.fillRect(0, 0, 16, 16)
   
-  // Brick pattern
+  // Darker brick lines
   ctx.fillStyle = '#8B4513'
-  // Horizontal lines
   ctx.fillRect(0, 5, 16, 1)
   ctx.fillRect(0, 11, 16, 1)
-  // Vertical lines
   ctx.fillRect(7, 0, 1, 5)
   ctx.fillRect(3, 6, 1, 5)
   ctx.fillRect(11, 6, 1, 5)
   ctx.fillRect(7, 12, 1, 4)
   
-  // Highlights
-  ctx.fillStyle = '#CD853F'
-  ctx.fillRect(1, 1, 2, 1)
-  ctx.fillRect(1, 7, 2, 1)
-  
-  return canvas.toDataURL()
+  return canvas.toDataURL('image/png')
 }
 
 export function generateQuestionBlockSprite(used = false) {
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
+  ctx.imageSmoothingEnabled = false
   canvas.width = 16
   canvas.height = 16
+  ctx.clearRect(0, 0, 16, 16)
   
   if (used) {
     // Used block (brown)
@@ -248,47 +247,59 @@ export function generateQuestionBlockSprite(used = false) {
     ctx.fillStyle = '#654321'
     ctx.fillRect(2, 2, 12, 12)
   } else {
-    // Question block (gold with ?)
+    // Question block (gold)
     ctx.fillStyle = '#FFD700'
     ctx.fillRect(0, 0, 16, 16)
     
-    // ? mark
+    // ? mark (white)
     ctx.fillStyle = '#FFFFFF'
-    // Top of ?
     ctx.fillRect(6, 3, 4, 2)
     ctx.fillRect(8, 5, 2, 2)
-    // Middle
     ctx.fillRect(7, 7, 2, 2)
-    // Dot
     ctx.fillRect(7, 10, 2, 2)
     
-    // Border highlights
+    // Border (darker gold)
     ctx.fillStyle = '#FFA500'
     ctx.fillRect(1, 1, 14, 1)
     ctx.fillRect(1, 1, 1, 14)
   }
   
-  return canvas.toDataURL()
+  return canvas.toDataURL('image/png')
 }
 
 export function generatePipeSprite() {
   const canvas = document.createElement('canvas')
   const ctx = canvas.getContext('2d')
+  ctx.imageSmoothingEnabled = false
   canvas.width = 32
   canvas.height = 32
+  ctx.clearRect(0, 0, 32, 32)
   
-  // Pipe body
+  // Pipe body (green)
   ctx.fillStyle = '#00AA00'
   ctx.fillRect(0, 8, 32, 24)
   
-  // Pipe top
-  ctx.fillStyle = '#00CC00'
+  // Pipe top (lighter green)
+  ctx.fillStyle = '#00DD00'
   ctx.fillRect(0, 0, 32, 10)
   
-  // Highlights
-  ctx.fillStyle = '#00DD00'
+  // Highlights (even lighter)
+  ctx.fillStyle = '#44FF44'
   ctx.fillRect(2, 2, 4, 6)
   ctx.fillRect(2, 10, 4, 20)
+  
+  // Shadows (darker)
+  ctx.fillStyle = '#006600'
+  ctx.fillRect(26, 2, 4, 6)
+  ctx.fillRect(26, 10, 4, 20)
+  
+  // Inner pipe opening (black oval)
+  ctx.fillStyle = '#000000'
+  ctx.fillRect(10, 14, 12, 8)
+  ctx.fillRect(12, 12, 8, 12)
+  
+  return canvas.toDataURL('image/png')
+} 10, 4, 20)
   
   // Shadows
   ctx.fillStyle = '#008800'
@@ -301,5 +312,5 @@ export function generatePipeSprite() {
   ctx.ellipse(16, 16, 8, 6, 0, 0, Math.PI * 2)
   ctx.fill()
   
-  return canvas.toDataURL()
+  return canvas.toDataURL('image/png')
 }
